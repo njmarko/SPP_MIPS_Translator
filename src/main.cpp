@@ -2,6 +2,7 @@
 #include <exception>
 
 #include "LexicalAnalysis.h"
+#include "SyntaxAnalysis.h"
 
 using namespace std;
 
@@ -31,6 +32,17 @@ int main()
 		{
 			lex.printLexError();
 			throw runtime_error("\nException! Lexical analysis failed!\n");
+		}
+
+		SyntaxAnalysis syn(lex);
+		retVal = syn.Do();
+		if (retVal)
+		{
+			cout << "Syntax analysis finished successfully!" << endl;
+		}
+		else
+		{
+			throw runtime_error("\nException! Syntax analysis failed!\n");
 		}
 	}
 	catch (runtime_error e)
