@@ -44,6 +44,9 @@ int main()
 		{
 			throw runtime_error("\nException! Syntax analysis failed!\n");
 		}
+
+
+
 	}
 	catch (runtime_error e)
 	{

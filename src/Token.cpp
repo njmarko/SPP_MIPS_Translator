@@ -38,7 +38,7 @@ void Token::makeToken(int begin, int end, std::vector<char>& programBuffer,  int
 	{
 		value += programBuffer[i];
 	}
-	value = value;
+	setValue(value);
 	tokenType = FiniteStateMachine::getTokenType(lastFiniteState);
 }
 

@@ -2,7 +2,7 @@
 #define __IR__
 
 #include "Types.h"
-
+#include <string>
 
 /**
  * This class represents one variable from program code.
@@ -19,12 +19,39 @@ public:
 
 	Variable() : m_type(NO_TYPE), m_name(""), m_position(-1), m_assignment(no_assign) {}
 	Variable(std::string name, int pos) : m_type(NO_TYPE), m_name(name), m_position(pos), m_assignment(no_assign) {}
+	Variable(std::string name, int pos, VariableType type) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign) {}
+	Variable(std::string name, int pos, VariableType type, int val) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(val) {}
+
+	/*
+	* Setter for the name of the variable
+	* @param name of the variable
+	*/
+	void set_name(std::string name);
+
+	/*
+	* Setter for the type of the variable
+	* @param type of the variable is either MEM_VAR,REG_VAR or NO_TYPE
+	*/
+	void set_type(VariableType type);
+
+	/*
+	* Setter for the position of the variable
+	* @param position of the variable
+	*/
+	void set_pos(int pos);
+
+	/*
+	* Setter for the register assigned for the variable
+	* @param name of the register from Regs enumeration
+	*/
+	void set_assignment(Regs reg);
 
 private:
 	VariableType m_type;
 	std::string m_name;
 	int m_position;
 	Regs m_assignment;
+	int m_value; // value assigned to _mem variable
 };
 
 

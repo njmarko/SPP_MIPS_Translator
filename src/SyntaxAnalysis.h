@@ -2,7 +2,8 @@
 
 #include "Token.h"
 #include "LexicalAnalysis.h"
-
+#include "IR.h"
+#include <string>
 
 /*
 * Class that will perform syntax analysis of the MAVN code

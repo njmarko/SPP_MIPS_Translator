@@ -20,12 +20,19 @@ void SyntaxAnalysis::Q()
 
 void SyntaxAnalysis::S()
 {
+	std::string s_id;
+	std::string s_val;
+	Variable v;
 	switch (currTok.getType())
 	{
 	case TokenType::T_MEM: // _mem mid num
 		eat(TokenType::T_MEM);
+		s_id= currTok.getValue();
 		eat(TokenType::T_M_ID);
+		s_val = currTok.getValue();
 		eat(TokenType::T_NUM);
+		
+		
 		break;
 	case TokenType::T_REG: // _reg rid
 		eat(TokenType::T_REG);
