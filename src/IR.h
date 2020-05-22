@@ -20,7 +20,7 @@ public:
 	Variable() : m_type(NO_TYPE), m_name(""), m_position(-1), m_assignment(no_assign) {}
 	Variable(std::string name, int pos) : m_type(NO_TYPE), m_name(name), m_position(pos), m_assignment(no_assign) {}
 	Variable(std::string name, int pos, VariableType type) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign) {}
-	Variable(std::string name, int pos, VariableType type, int val) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(val) {}
+	Variable(std::string name, int pos, VariableType type, std::string val) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(val) {}
 
 	/*
 	* Setter for the name of the variable
@@ -51,7 +51,7 @@ private:
 	std::string m_name;
 	int m_position;
 	Regs m_assignment;
-	int m_value; // value assigned to _mem variable
+	std::string m_value; // value assigned to _mem variable
 };
 
 

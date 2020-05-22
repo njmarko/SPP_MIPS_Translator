@@ -3,6 +3,7 @@
 
 #include "LexicalAnalysis.h"
 #include "SyntaxAnalysis.h"
+#include "SymbolTable.h"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ int main()
 		bool retVal = false;
 
 		LexicalAnalysis lex;
+		SymbolTable symTab;
 
 		if (!lex.readInputFile(fileName))
 			throw runtime_error("\nException! Failed to open input file!\n");
@@ -34,7 +36,7 @@ int main()
 			throw runtime_error("\nException! Lexical analysis failed!\n");
 		}
 
-		SyntaxAnalysis syn(lex);
+		SyntaxAnalysis syn(lex,symTab);
 		retVal = syn.Do();
 		if (retVal)
 		{

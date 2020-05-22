@@ -4,6 +4,7 @@
 #include "LexicalAnalysis.h"
 #include "IR.h"
 #include <string>
+#include "SymbolTable.h"
 
 /*
 * Class that will perform syntax analysis of the MAVN code
@@ -13,8 +14,9 @@ public:
 	/*
 	* Constructor that takes areference to lexical analysis module
 	* @param reference to a lexer that will be used to get tokens
+	* @param reference to a SymbolTable that holds collected data
 	*/
-	SyntaxAnalysis(LexicalAnalysis& lex);
+	SyntaxAnalysis(LexicalAnalysis& lex, SymbolTable& symTab);
 
 	/*
 	* Method that will do the syntax analysis
@@ -22,6 +24,8 @@ public:
 	*/
 	bool Do();
 private:
+
+	int linePos;
 
 	/*
 	* Starting nonterminal symbol Q
@@ -52,6 +56,11 @@ private:
 	* A reference to the lexer that will be used to get tokens
 	*/
 	LexicalAnalysis& lexAnalysis;
+
+	/*
+	* A reference to the SymbolTable that will be used to store data
+	*/
+	SymbolTable& symTab;
 
 	/*
 	* Iterator that goes trought the output of the lexical analysis

@@ -90,6 +90,7 @@
     <ClCompile Include="IR.cpp" />
     <ClCompile Include="LexicalAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SymbolTable.cpp" />
     <ClCompile Include="SyntaxAnalysis.cpp" />
     <ClCompile Include="Token.cpp" />
   </ItemGroup>
