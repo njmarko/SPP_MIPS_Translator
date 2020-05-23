@@ -21,12 +21,14 @@ typedef std::list<std::pair<std::string, int>> Labels;
 typedef std::list<std::string> Functions;
 
 /*
-* Class that holds information about instructions, variables, functions
+* Class that holds various information about instructions, variables, functions
 */
 class SymbolTable {
 public:
 
-
+	/*
+	* Destructor that deletes instructions,memVariables and regVariables
+	*/
 	~SymbolTable();
 
 	/*

@@ -4,7 +4,23 @@
 
 SymbolTable::~SymbolTable()
 {
-	//TODO
+	for each (Variable* var in memVariables)
+	{
+		delete var;
+	}
+
+	for each (Variable* var in regVariables)
+	{
+		delete var;
+	}
+
+	for each (Instruction* var in instructions)
+	{
+		delete var;
+	}
+	memVariables.clear();
+	regVariables.clear();
+	instructions.clear();
 }
 
 Variable * SymbolTable::isMemVarDefined(const std::string& name)
