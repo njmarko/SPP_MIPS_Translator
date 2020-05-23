@@ -5,6 +5,7 @@
 #include "IR.h"
 #include <string>
 #include "SymbolTable.h"
+#include <list>
 
 /*
 * Class that will perform syntax analysis of the MAVN code
@@ -37,6 +38,7 @@ private:
 
 	/*
 	* Nonterminal symbol S
+	* Variables,labels and functions will be created here
 	*/
 	void S();
 
@@ -47,6 +49,7 @@ private:
 
 	/*
 	* Nonterminal symbol E
+	* Instructions will be created here
 	*/
 	void E();
 

@@ -75,71 +75,94 @@ void SyntaxAnalysis::L()
 
 void SyntaxAnalysis::E()
 {
-	
+	std::list<std::string> src; // name of source variables
+	std::list<std::string> dst; // name of destination variables
 	switch (currTok.getType())
 	{
 	case TokenType::T_ADD: // add rid, rid, rid
 		eat(TokenType::T_ADD);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		break;
 	case TokenType::T_ADDI: // addi rid, rid, num
 		eat(TokenType::T_ADDI);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_NUM);
 		break;
 	case TokenType::T_SUB: // sub rid, rid, rid
 		eat(TokenType::T_SUB);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		break;
 	case TokenType::T_LA: // la rid, mid
 		eat(TokenType::T_LA);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_M_ID);
 		break;
 	case TokenType::T_LW: // lw rid, num(rid)
 		eat(TokenType::T_LW);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_NUM);
 		eat(TokenType::T_L_PARENT);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_R_PARENT);
 		break;
 	case TokenType::T_LI: // li rid, num
 		eat(TokenType::T_LI);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_NUM);
 		break;
 	case TokenType::T_SW: // sw rid, num(rid)
 		eat(TokenType::T_SW);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_NUM);
 		eat(TokenType::T_L_PARENT);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_R_PARENT);
 		break;
 	case TokenType::T_B: // b id
 		eat(TokenType::T_B);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_ID);
 		break;
 	case TokenType::T_BLTZ: // bltz rid, id
 		eat(TokenType::T_BLTZ);
+		dst.emplace_back(currTok.getValue());
 		eat(TokenType::T_R_ID);
 		eat(TokenType::T_COMMA);
+		src.emplace_back(currTok.getValue());
 		eat(TokenType::T_ID);
 		break;
 	case TokenType::T_NOP: // nop

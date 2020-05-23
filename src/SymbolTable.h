@@ -173,8 +173,5 @@ private:
 	*/
 	Functions functions;
 
-
-
-	
 };
 
