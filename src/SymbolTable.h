@@ -9,7 +9,8 @@
 
 /*
 * List of paris for label and function names, 
-* and int is the position of the instruction in the code
+* and int is the position of the  first instruction in the code
+* that belongs to the label
 */
 typedef std::list<std::pair<std::string, int>> Labels;
 
@@ -78,10 +79,16 @@ public:
 	Instructions& getInstructions();
 
 	/*
-	* Getter for the variables
-	* @returns list of variable pointers
+	* Getter for the memory variables
+	* @returns list of memory variable pointers
 	*/
-	Variables& getVariables();
+	Variables& getMemVariables();
+
+	/*
+	* Getter for the register variables
+	* @returns list of register variable pointers
+	*/
+	Variables& getRegVariables();
 
 	/*
 	* Getter for the labels
@@ -109,21 +116,34 @@ public:
 	* @throws runtime_exception if the mem variable is already defined
 	* @throws runtime_exception if the name format is incorrect
 	*/
-	void addMemVariable(std::string name, Variable::VariableType type, std::string value);
+	void addMemVariable(const std::string& name, Variable::VariableType type, const std::string& value);
+
+
+	/*
+	* Method for adding a new register variable
+	* @param name of the variable
+	* @param type of the variable
+	* @param value associated with the reg variable
+	* @throws runtime_exception if the reg variable is already defined
+	* @throws runtime_exception if the name format is incorrect
+	*/
+	void addRegVariable(const std::string& name, Variable::VariableType type);
 
 	/*
 	* Method for adding a new label to the labels collections
-	* @param label name 
-	* @param label position
+	* @param label name
+	* @throws runtime_exception if the variable or function with the same name already exists
+	* @throws runtime_exception if the name format is incorrect
 	*/
-	void addLabel(std::string lab_name,int pos);
+	void addLabel(const std::string& lab_name);
 
 	/*
 	* Method for adding a new function to the functions and labels collections
 	* @param function name
-	* @param funciton pos
+	* @throws runtime_exception if the variable or function with the same name already exists
+	* @throws runtime_exception if the name format is incorrect
 	*/
-	void addFunction(std::string func_name,int pos);
+	void addFunction(const std::string& func_name);
 private:
 	/*
 	* List of instruction pointers that were created from the code

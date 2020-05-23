@@ -38,6 +38,7 @@ int main()
 
 		SyntaxAnalysis syn(lex,symTab);
 		retVal = syn.Do();
+
 		if (retVal)
 		{
 			cout << "Syntax analysis finished successfully!" << endl;

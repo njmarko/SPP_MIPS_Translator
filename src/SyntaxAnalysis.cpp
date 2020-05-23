@@ -33,25 +33,25 @@ void SyntaxAnalysis::S()
 		eat(TokenType::T_M_ID);
 		s_val = currTok.getValue();
 		eat(TokenType::T_NUM);
-		//symTab.addVariable();
+		symTab.addMemVariable(s_id,Variable::MEM_VAR,s_val);
 		break;
 	case TokenType::T_REG: // _reg rid
 		eat(TokenType::T_REG);
 		s_id = currTok.getValue();
 		eat(TokenType::T_R_ID);
-		//symTab.addVariable(new Variable(s_id, linePos++, Variable::REG_VAR));
+		symTab.addRegVariable(s_id, Variable::REG_VAR);
 		break;
 	case TokenType::T_FUNC: // _func id
 		eat(TokenType::T_FUNC);
 		s_id = currTok.getValue();
 		eat(TokenType::T_ID);
-		symTab.addFunction(s_id, linePos++);
+		symTab.addFunction(s_id);
 		break;
 	case TokenType::T_ID: // id: E
 		s_id = currTok.getValue();
 		eat(TokenType::T_ID);
 		eat(TokenType::T_COL);
-		symTab.addLabel(s_id, linePos++);
+		symTab.addLabel(s_id);
 		E();
 		break;
 	default: // E 
