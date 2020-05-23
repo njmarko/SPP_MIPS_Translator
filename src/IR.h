@@ -51,6 +51,11 @@ public:
 	Variable(std::string name, int pos, VariableType type, std::string val) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(val) {}
 
 	/*
+	* Destructor for variable class
+	*/
+	~Variable() {};
+
+	/*
 	* Function that prints the name of the variable
 	* @param reference to the output stream
 	* @param const reference to the variable that is intended for printing
@@ -257,7 +262,7 @@ private:
 
 
 /**
- * This type represents list of instructions from program code.
+ * This type represents a list of instructions from program code.
  */
 typedef std::list<Instruction*> Instructions;
 

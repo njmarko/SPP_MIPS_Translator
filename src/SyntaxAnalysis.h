@@ -25,6 +25,9 @@ public:
 	bool Do();
 private:
 
+	/*
+	* Position of the line in the code. Usefull for error reporting
+	*/
 	int linePos;
 
 	/*

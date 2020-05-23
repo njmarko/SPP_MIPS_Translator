@@ -4,23 +4,72 @@
 #include <map>
 #include <list>
 #include <string>
-
-/*
-* Key is the label name, and int is the position in the code
-*/
-typedef std::map<std::string, Instructions> Labels;
+#include <regex>
 
 
 /*
-* Key is the function name, and int is the position in the code
+* List of paris for label and function names, 
+* and int is the position of the instruction in the code
 */
-typedef std::map<std::string, int> Functions;
+typedef std::list<std::pair<std::string, int>> Labels;
+
+
+/*
+* List of function names
+*/
+typedef std::list<std::string> Functions;
 
 /*
 * Class that holds information about instructions, variables, functions
 */
 class SymbolTable {
 public:
+
+	SymbolTable();
+	~SymbolTable();
+
+	/*
+	* Checks if memVariables list contains the variable
+	* @param name of the mem variable
+	* @returns if the mem variable exists, returns it, otherwise returns NULL
+	*/
+	Variable* isMemVarDefined(const std::string& name);
+
+
+	/*
+	* Checks if regVariables list contains the variable
+	* @param name of the reg variable
+	* @returns if the reg variable exists, returns it, otherwise returns NULL
+	*/
+	Variable* isRegVarDefined(const std::string& name);
+
+	/*
+	* Checks if functions list contains the function
+	* @param name of the function
+	* @returns true if the function exists, otherwise false
+	*/
+	bool isFunctionDefined(const std::string& name);
+
+	/*
+	* Checks if functions list contains the function
+	* @param name of the function
+	* @returns true if the function exists, otherwise false
+	*/
+	bool isLabelDefined(const std::string& name);
+
+	/*
+	* Function for getting the number of MEM variables
+	* @returns number of MEM variables
+	*/
+	int getNumMemVariables();
+
+	/*
+	* Function for getting the number of instructions
+	* @returns number of instructions
+	*/
+	int getNumInstructions();
+
+	// GETTERS AND SETTERS
 
 	/*
 	* Getter for the instructions
@@ -53,28 +102,57 @@ public:
 	void addInstruction(Instruction* instr);
 
 	/*
-	* Method for adding a new variable
-	* @param variable pointer
+	* Method for adding a new memory variable
+	* @param name of the variable
+	* @param type of the variable 
+	* @param value associated with the mem variable
+	* @throws runtime_exception if the mem variable is already defined
+	* @throws runtime_exception if the name format is incorrect
 	*/
-	void addVariable(Variable* var);
+	void addMemVariable(std::string name, Variable::VariableType type, std::string value);
 
 	/*
-	* Method for adding a new label
+	* Method for adding a new label to the labels collections
 	* @param label name 
 	* @param label position
 	*/
 	void addLabel(std::string lab_name,int pos);
 
 	/*
-	* Method for adding a new function
+	* Method for adding a new function to the functions and labels collections
 	* @param function name
 	* @param funciton pos
 	*/
 	void addFunction(std::string func_name,int pos);
 private:
+	/*
+	* List of instruction pointers that were created from the code
+	*/
 	Instructions instructions;
-	Variables variables;
+
+	/*
+	* List of memory variable pointers that were gathered from the code
+	*/
+	Variables memVariables;
+
+	/*
+	* List of register variable pointers that were gathered from the code
+	*/
+	Variables regVariables;
+
+	/*
+	* List of pairs that contain name of the variable 
+	* and the position of the first instruction
+	*/
 	Labels labels;
+
+	/*
+	* List of function names
+	*/
 	Functions functions;
+
+
+
+	
 };
 
