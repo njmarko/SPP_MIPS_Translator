@@ -8,7 +8,7 @@
 /*
 * Key is the label name, and int is the position in the code
 */
-typedef std::map<std::string, int> Labels;
+typedef std::map<std::string, Instructions> Labels;
 
 
 /*

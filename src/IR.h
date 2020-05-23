@@ -10,17 +10,53 @@
 class Variable
 {
 public:
+	/*
+	* Supported types of variables for MAVN
+	*/
 	enum VariableType
 	{
+		/// Memory variable
 		MEM_VAR,
+		/// Register variable
 		REG_VAR,
-		NO_TYPE
+		/// Variable with no asigned type
+		NO_TYPE	
 	};
-
+	/*
+	* Default constructor that just initializes the atributes
+	*/
 	Variable() : m_type(NO_TYPE), m_name(""), m_position(-1), m_assignment(no_assign) {}
+	/*
+	* Constructor for creating a variable with name and position
+	* @param name of the variable
+	* @param position in the interference matrix
+	*/
 	Variable(std::string name, int pos) : m_type(NO_TYPE), m_name(name), m_position(pos), m_assignment(no_assign) {}
+	/*
+	* Constructor for creating a variable with name, position and type
+	* Ususally used for variables of type REG_VAR
+	* @param name of the variable
+	* @param position in the interference matrix
+	* @param type of the variable
+	*/
 	Variable(std::string name, int pos, VariableType type) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign) {}
+	/*
+	* Constructor for creating a variable with name, position and type
+	* Used for variable of type MEM_VAR
+	* @param name of the variable
+	* @param position in the interference matrix
+	* @param type of the variable
+	* @param value of the MEM variable
+	*/
 	Variable(std::string name, int pos, VariableType type, std::string val) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(val) {}
+
+	/*
+	* Function that prints the name of the variable
+	* @param reference to the output stream
+	* @param const reference to the variable that is intended for printing
+	* @returns reference to the output stream that enables successive printing
+	*/
+	friend std::ostream& operator<<(std::ostream& out, const Variable& v);
 
 	/*
 	* Setter for the name of the variable
@@ -35,7 +71,7 @@ public:
 	void set_type(VariableType type);
 
 	/*
-	* Setter for the position of the variable
+	* Setter for the position of the variable in the interference matrix
 	* @param position of the variable
 	*/
 	void set_pos(int pos);
@@ -46,12 +82,61 @@ public:
 	*/
 	void set_assignment(Regs reg);
 
+	/*
+	* Getter for variable type
+	* @returns type of the variable that can be MEM_VAR, REG_VAR or NO_TYPE
+	*/
+	Variable::VariableType getType();
+
+	/*
+	* Getter for variable name
+	* @returns name of the variable
+	*/
+	std::string getName();
+
+	/*
+	* Getter for variable position in the interference matrix
+	* @returns position in the interference matrix
+	*/
+	int getPos();
+
+	/*
+	* Getter for register asigned to the variable
+	* @returns register that was assigned to the variable
+	*/
+	Regs getAsignment();
+
+	/*
+	* Getter for value of the MEM variable
+	* @returns value that the MEM holds
+	*/
+	std::string getValue();
+
 private:
+	/*
+	* Type of the variable that can be MEM_VAR, REG_VAR or NO_TYPE
+	*/
 	VariableType m_type;
+
+	/*
+	* Name of the variable
+	*/
 	std::string m_name;
-	int m_position;
+
+	/*
+	* Position in interference matrix
+	*/
+	int m_position; 
+
+	/*
+	* Register that was assigned
+	*/
 	Regs m_assignment;
-	std::string m_value; // value assigned to _mem variable
+
+	/*
+	* Value assigned to _mem variable
+	*/
+	std::string m_value; 
 };
 
 
@@ -67,22 +152,106 @@ typedef std::list<Variable*> Variables;
 class Instruction
 {
 public:
+	/*
+	* Default constructior for the instruction
+	*/
 	Instruction () : m_position(0), m_type(I_NO_TYPE) {}
+
+	/*
+	* Constructor with parameters that is used for creating non branching instructions
+	* @param position of the instruction
+	* @param type of the instruction that MAVN suports
+	* @param list of destination variables
+	* @param list of source variables
+	*/
 	Instruction (int pos, InstructionType type, Variables& dst, Variables& src) :
 		m_position(pos), m_type(type), m_dst(dst), m_src(src) {}
 
+	/*
+	* Constructor with parameters that is used for creating branching instructions
+	* @param position of the instruction
+	* @param type of the instruction that MAVN suports
+	* @param list of destination variables
+	* @param list of source variables
+	*/
+	Instruction(int pos, InstructionType type, Variables& dst, Variables& src,
+		const std::string& j_label) :
+		m_position(pos), m_type(type), m_dst(dst), m_src(src),jump_label(j_label) {}
+
+	/*
+	* Destructor for the instruction
+	*/
+	~Instruction();
+
+	/*
+	* Getter for the optional member ofsetNum
+	*/
+	int getOffsetNum();
+
+	/*
+	* Getter for the optional member jumpLabel
+	* @returns name of the label this instructions could jump to
+	*/
+	std::string getJumpLabel();
 private:
+	/*
+	* Position of the Instruction
+	*/
 	int m_position;
+
+	/*
+	* Type of instruction suppored by MAVN
+	*/
 	InstructionType m_type;
-	
+
+	/*
+	* Optional: Name of the label where the instruction should jump
+	*/
+	std::string jump_label; 
+
+	/*
+	* Optional: Number before the parenthesis in the lw r1, 0(r4); type of instructions
+	*/
+	int offset_num;
+
+	/*
+	* Destination set
+	*/
 	Variables m_dst;
+
+	/*
+	* Source set
+	*/
 	Variables m_src;
 
+	/*
+	* Use set
+	*/
 	Variables m_use;
+
+	/*
+	* Defines set
+	*/
 	Variables m_def;
+
+	/*
+	* In set
+	*/
 	Variables m_in;
+
+	/*
+	* Out set
+	*/
 	Variables m_out;
+
+	/*
+	* List of succesor instructions
+	*/
 	std::list<Instruction*> m_succ;
+	
+	/*
+	* List of predecesor instructions
+	*/
 	std::list<Instruction*> m_pred;
 };
 
