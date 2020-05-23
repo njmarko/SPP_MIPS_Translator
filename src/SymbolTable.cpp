@@ -1,8 +1,6 @@
 ﻿#include "SymbolTable.h"
 
-SymbolTable::SymbolTable()
-{
-}
+
 
 SymbolTable::~SymbolTable()
 {
@@ -102,7 +100,7 @@ void SymbolTable::addMemVariable(std::string name, Variable::VariableType type, 
 		throw std::runtime_error("Incorrect memory variable name: " + name);
 	}
 
-	memVariables.emplace_back(name,-1,type,value);
+	memVariables.push_back(new Variable(name,-1,type,value));
 }
 
 void SymbolTable::addLabel(std::string lab_name, int pos)

@@ -25,7 +25,7 @@ typedef std::list<std::string> Functions;
 class SymbolTable {
 public:
 
-	SymbolTable();
+
 	~SymbolTable();
 
 	/*
