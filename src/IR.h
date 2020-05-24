@@ -168,9 +168,10 @@ public:
 	* @param type of the instruction that MAVN suports
 	* @param list of destination variables
 	* @param list of source variables
+	* @param name of the parent label where this instruction belongs
 	*/
-	Instruction (int pos, InstructionType type, Variables& dst, Variables& src) :
-		m_position(pos), m_type(type), m_dst(dst), m_src(src) {}
+	Instruction (int pos, InstructionType type, Variables& dst, Variables& src,const std::string& parent_lab) :
+		m_position(pos), m_type(type), m_dst(dst), m_src(src),parent_label(parent_lab) {}
 
 	/*
 	* Constructor with parameters that is used for creating branching instructions
@@ -178,13 +179,17 @@ public:
 	* @param type of the instruction that MAVN suports
 	* @param list of destination variables
 	* @param list of source variables
+	* @param name of the label where this instruction jumps
+	* @param name of the parent label where this instruction belongs
 	*/
 	Instruction(int pos, InstructionType type, Variables& dst, Variables& src,
-		const std::string& j_label) :
-		m_position(pos), m_type(type), m_dst(dst), m_src(src),jump_label(j_label) {}
+		const std::string& j_label, const std::string& parent_lab) :
+		m_position(pos), m_type(type), m_dst(dst), m_src(src),jump_label(j_label),parent_label(parent_lab){}
 
 	/*
 	* Destructor for the instruction
+	* Doesn't destroy items in any of the list it contains
+	* because items in those lists can exist in other places
 	*/
 	~Instruction();
 
@@ -198,6 +203,12 @@ public:
 	* @returns name of the label this instructions could jump to
 	*/
 	std::string getJumpLabel();
+
+	/*
+	* Getter for the position asigned to the instruction
+	* @returns position of the instruction
+	*/
+	int getPos();
 private:
 	/*
 	* Position of the Instruction
@@ -213,6 +224,13 @@ private:
 	* Optional: Name of the label where the instruction should jump
 	*/
 	std::string jump_label; 
+
+	/*
+	* Label where this instruction belongs
+	* instruction can have no parent label
+	* Used when creating MIPS output code
+	*/
+	std::string parent_label;
 
 	/*
 	* Optional: Number before the parenthesis in the lw r1, 0(r4); type of instructions

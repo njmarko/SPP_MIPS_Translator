@@ -59,6 +59,11 @@ std::string Instruction::getJumpLabel()
 	return jump_label;
 }
 
+int Instruction::getPos()
+{
+	return m_position;
+}
+
 std::ostream & operator<<(std::ostream & out, const Variable & v)
 {
 	return out << v.m_name;

@@ -2,6 +2,10 @@
 
 
 
+SymbolTable::SymbolTable():instrCount(0)
+{
+}
+
 SymbolTable::~SymbolTable()
 {
 	for each (Variable* var in memVariables)
@@ -21,6 +25,17 @@ SymbolTable::~SymbolTable()
 	memVariables.clear();
 	regVariables.clear();
 	instructions.clear();
+}
+
+std::string SymbolTable::getParentLabel()
+{
+	if (labels.size() > 0)
+	{
+		return labels.back().first;
+	}
+	else {
+		return "";
+	}
 }
 
 Variable * SymbolTable::isMemVarDefined(const std::string& name)
@@ -99,9 +114,76 @@ Functions & SymbolTable::getFunctions()
 	return functions;
 }
 
+void SymbolTable::makeInstruction(const std::list<std::string>& params, InstructionType i_type)
+{
+	std::list<std::string>::const_iterator cit_params = params.cbegin();
+	Variable* v;
+	Instruction* ins;
+	Variables src;
+	Variables dst;
+	switch (i_type)
+	{
+	case I_SUB: // E → sub rid, rid, rid
+	case I_ADD: // E → add rid, rid, rid
+		if ((v=isRegVarDefined(*cit_params))==nullptr)
+		{
+			throw std::runtime_error("Undefined first register variable in the ADD instruction: " + *cit_params);
+		}
+		dst.push_back(v);
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error("Undefined second register variable in the ADD instruction: " + *cit_params);
+		}
+		src.emplace_back(v);
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error("Undefined third register variable in the ADD instruction: " + *cit_params);
+		}
+		src.emplace_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++,i_type,dst,src,getParentLabel());
+		break;
+	case I_ADDI:
+		break;
+	case I_LA:
+		break;
+	case I_LI:
+		break;
+	case I_LW:
+		break;
+	case I_SW:
+		break;
+	case I_BLTZ:
+		break;
+	case I_B:
+		break;
+	case I_NOP:
+		break;
+	case I_NO_TYPE: // just report the error if this happens
+		break;
+	default:
+		break;
+	}
+	addInstruction(ins);
+}
+
 void SymbolTable::addInstruction(Instruction * instr)
 {
 	instructions.push_back(instr);
+
+	/*
+	* This part is for adding the position of the first instruction
+	* to the latest label. If there are no labels 
+	* or if the label already has instruction assigned
+	* then this part is skipped.
+	*/
+	if (labels.size() != 0)
+	{
+		Labels::reverse_iterator rit = labels.rbegin();
+		if (rit->second == -1) {
+			rit->second = instr->getPos();
+		}
+	}
 }
 
 void SymbolTable::addMemVariable(const std::string& name, Variable::VariableType type, const std::string& value)

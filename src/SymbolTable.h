@@ -14,7 +14,6 @@
 */
 typedef std::list<std::pair<std::string, int>> Labels;
 
-
 /*
 * List of function names
 */
@@ -27,9 +26,20 @@ class SymbolTable {
 public:
 
 	/*
+	* Default constructor
+	*/
+	SymbolTable();
+
+	/*
 	* Destructor that deletes instructions,memVariables and regVariables
 	*/
 	~SymbolTable();
+
+	/*
+	* Gets the last declared label
+	* @returns name of the last declared label, or empty string "" if there are none
+	*/
+	std::string getParentLabel();
 
 	/*
 	* Checks if memVariables list contains the variable
@@ -105,6 +115,14 @@ public:
 	Functions& getFunctions();
 
 	/*
+	* Method for creating a new instructions
+	* @param const reference to a list of strings that constans parameter variables
+	* @param instruction type
+	* @throws 
+	*/
+	void makeInstruction(const std::list<std::string>& params, InstructionType type);
+
+	/*
 	* Method for adding a new instructions
 	* @param instruction pointer
 	*/
@@ -147,6 +165,12 @@ public:
 	*/
 	void addFunction(const std::string& func_name);
 private:
+
+	/*
+	* Counter for instructions that is incremented whenever new instruction is added
+	*/
+	int instrCount;
+
 	/*
 	* List of instruction pointers that were created from the code
 	*/
