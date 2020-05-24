@@ -129,6 +129,22 @@ void Instruction::printVarNames(const Variables & vars)
 	std::cout << std::endl;
 }
 
+void Instruction::fillDefVariables()
+{
+	for each (Variable* var in m_dst)
+	{
+		m_def.push_back(var);
+	}
+}
+
+void Instruction::fillUseVariables()
+{
+	for each (Variable* var in m_src)
+	{
+		m_use.push_back(var);
+	}
+}
+
 std::ostream & operator<<(std::ostream & out, const Variable & v)
 {
 	return out << v.m_name;

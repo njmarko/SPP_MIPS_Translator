@@ -274,6 +274,16 @@ public:
 	* @param const reference to a list of pointers of variables
 	*/
 	void printVarNames(const Variables& vars);
+
+	/*
+	* Goes through destination variables and moves them to the def set
+	*/
+	void fillDefVariables();
+
+	/*
+	* Goes through source variables and moves them to the use set
+	*/
+	void fillUseVariables();
 private:
 	/*
 	* Position of the Instruction

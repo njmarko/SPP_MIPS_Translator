@@ -209,6 +209,8 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++,i_type,dst,src,getParentLabel());
+		ins->fillDefVariables();
+		ins->fillUseVariables();
 		break;
 	case I_ADDI: // E → addi rid, rid, num
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
@@ -223,6 +225,8 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),std::stoi(*(++cit_params)));
+		ins->fillDefVariables();
+		ins->fillUseVariables();
 		break;
 	case I_LA: // E → la rid, mid
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
@@ -237,6 +241,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel());
+		ins->fillDefVariables();
 		break;
 	case I_LI: // E → li rid, num
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
@@ -246,6 +251,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		dst.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),std::stoi(*(++cit_params)));
+		ins->fillDefVariables();
 		break;
 	case I_LW: // E → lw rid, num(rid)
 	case I_SW: // E → sw rid, num(rid)
@@ -263,6 +269,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),offsetNum);
+		ins->fillDefVariables();
 		break;
 	case I_BLTZ: // E → bltz rid, id
 		/*
@@ -278,6 +285,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		dst.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, *(++cit_params), getParentLabel());
+		ins->fillUseVariables();
 		break;
 	case I_B: // E → b id
 		/*
