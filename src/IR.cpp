@@ -72,6 +72,31 @@ InstructionType Instruction::getType()
 	return m_type;
 }
 
+Variables & Instruction::getIn()
+{
+	return m_in;
+}
+
+Variables & Instruction::getOut()
+{
+	return m_out;
+}
+
+Variables & Instruction::getUse()
+{
+	return m_use;
+}
+
+Variables & Instruction::getDef()
+{
+	return m_def;
+}
+
+Instructions& Instruction::getSucc()
+{
+	return m_succ;
+}
+
 void Instruction::addSucc(Instruction * instr)
 {
 	m_succ.push_back(instr);

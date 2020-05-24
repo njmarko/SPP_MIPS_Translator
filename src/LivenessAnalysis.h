@@ -2,6 +2,7 @@
 
 #include "SymbolTable.h"
 #include <iostream>
+#include <algorithm>
 
 class LivenessAnalysis: public Visitor{
 public:

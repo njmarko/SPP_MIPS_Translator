@@ -55,7 +55,10 @@ int main()
 		cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
 		symTab.printInstructions();
 
+		cout << "\nDoing Liveness analysis..." << endl;
 		symTab.accept(livenessAnalysis);
+		cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
+		symTab.printInstructions();
 	}
 	catch (runtime_error e)
 	{

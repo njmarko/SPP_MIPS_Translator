@@ -270,6 +270,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),offsetNum);
 		ins->fillDefVariables();
+		ins->fillUseVariables();
 		break;
 	case I_BLTZ: // E → bltz rid, id
 		/*

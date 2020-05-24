@@ -244,6 +244,35 @@ public:
 	*/
 	InstructionType getType();
 
+	/*
+	* Getter for the list of IN variables
+	* @returns reference to the list of IN variable pointers
+	*/
+	Variables& getIn();
+
+	/*
+	* Getter for the list of OUT variables
+	* @returns reference to the list of OUT variable pointers
+	*/
+	Variables& getOut();
+
+	/*
+	* Getter for the list of USE variables
+	* @returns reference to the list of USE variable pointers
+	*/
+	Variables& getUse();
+
+	/*
+	* Getter for the list of Defined variables
+	* @returns reference to the list of Defined variable pointers
+	*/
+	Variables& getDef();
+
+	/*
+	* Getter for the list of Successor instructions
+	* @returns reference to the list of Successor instructions pointers
+	*/
+	Instructions& getSucc();
 
 	/*
 	* Used for adding a successor instruction
