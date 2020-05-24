@@ -38,6 +38,19 @@ public:
 	~SymbolTable();
 
 	/*
+	* Function that fills successor and predecessor sets
+	* @throws runtime_error (Semantic) if the lable that is being jump to doesn't exist 
+	*/
+	void connectInstructions();
+
+	/*
+	* Gets the first instruction encountered after jump to the label
+	* @param name of the label
+	* @returns pointer to the first instruction encountered after the jump to the label
+	*/
+	Instruction* getInstrFromLabel(const std::string& label);
+
+	/*
 	* Gets the last declared label
 	* @returns name of the last declared label, or empty string "" if there are none
 	*/
@@ -120,7 +133,7 @@ public:
 	* Method for creating a new instructions
 	* @param const reference to a list of strings that constans parameter variables
 	* @param instruction type
-	* @throws 
+	* @throws runtime_error with informations related to the type of instruction and variable
 	*/
 	void makeInstruction(const std::list<std::string>& params, InstructionType type);
 

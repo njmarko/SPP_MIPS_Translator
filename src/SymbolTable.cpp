@@ -27,6 +27,73 @@ SymbolTable::~SymbolTable()
 	instructions.clear();
 }
 
+void SymbolTable::connectInstructions()
+{
+	Instructions::iterator sucit = instructions.begin();
+	Instructions::iterator predit = ++instructions.begin(); // predit is one step ahead of the sucit instruction
+	InstructionType type;
+	Instruction* jump_instr;
+	for (;predit!=instructions.end();++sucit,++predit)
+	{
+		type = (*sucit)->getType();
+		//This is where i connect branching instructions and throw error if the label doesn't exist
+		if (InstructionType::I_B==type || InstructionType::I_BLTZ==type)
+		{
+			//TODO: Change how label is checked if it is not possible to jump to the function
+			if (!isLabelDefined((*sucit)->getJumpLabel())) {
+				throw std::runtime_error("Label " + (*sucit)->getJumpLabel() 
+					+ " that the instruction " + instrTypeToStr((*sucit)->getType())
+					+" is trying to jump to is not defined!");
+			}
+			jump_instr = getInstrFromLabel((*sucit)->getJumpLabel());
+			if (jump_instr != nullptr) //it could happen if the gramar is changed
+			{
+				// adds the current branch instruction to the predecesors of the instruction that is being jumped to
+				jump_instr->addPred(*sucit);
+				// adds the instruction that is being jumped to to the list of successors of the current branch instruction
+				(*sucit)->addSucc(jump_instr);
+			}
+		}
+		if (InstructionType::I_B == type != type)
+		{
+			(*sucit)->addSucc(*predit); // predit is one step ahead of the sucit instruction
+		}
+		(*predit)->addPred((*sucit)); // predit is one step ahead of the sucit instruction
+	}
+}
+
+Instruction * SymbolTable::getInstrFromLabel(const std::string & label)
+{
+	/*
+	* This may be an overcomplicated solution, because the gramar doesn't allow for some of the cases to happen
+	* but the idea is that it will continue to work if the gramar for the labels changes
+	* It also accounts for instructions being removed in some later steps
+	*/
+
+	bool lab_encountered = false; // begin checking instructions after this is true
+	//first we iterate trough the labels
+	for (Labels::const_iterator cit = labels.cbegin(); cit != labels.cend(); ++cit) {
+		if (!lab_encountered && (*cit).first == label)
+		{
+			lab_encountered = true;
+		}
+		if (lab_encountered) // begin checking for instructions after label has been
+		{
+			// this can only happen if the the gramatic rules are changed or if it is possible to jump to a function
+			// current rule is S → id: E , and that guarantees that instruction must come after the label
+			if ((*cit).second == -1) continue; 
+			for (Instructions::iterator instr_it = instructions.begin();instr_it != instructions.end();++instr_it)
+			{
+				if ((*instr_it)->getNumValue() >= (*cit).second) // if the instruction was removed it will take the next one
+				{
+					return *instr_it;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
 std::string SymbolTable::getParentLabel()
 {
 	if (labels.size() > 0)

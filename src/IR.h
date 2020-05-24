@@ -231,6 +231,26 @@ public:
 	* @returns position of the instruction
 	*/
 	int getPos();
+
+	/*
+	* Getter for the instruction type
+	* @returns position the type of instruction
+	*/
+	InstructionType getType();
+
+
+	/*
+	* Used for adding a successor instruction
+	* @param poinster to the successor instruction
+	*/
+	void addSucc(Instruction* instr);
+
+
+	/*
+	* Used for adding a predecesor instruction
+	* @param poinster to the predecesor instruction
+	*/
+	void addPred(Instruction* instr);
 private:
 	/*
 	* Position of the Instruction

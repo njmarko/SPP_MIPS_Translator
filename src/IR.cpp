@@ -67,6 +67,21 @@ int Instruction::getPos()
 	return m_position;
 }
 
+InstructionType Instruction::getType()
+{
+	return m_type;
+}
+
+void Instruction::addSucc(Instruction * instr)
+{
+	m_succ.push_back(instr);
+}
+
+void Instruction::addPred(Instruction * instr)
+{
+	m_pred.push_back(instr);
+}
+
 std::ostream & operator<<(std::ostream & out, const Variable & v)
 {
 	return out << v.m_name;

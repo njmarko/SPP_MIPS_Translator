@@ -48,6 +48,9 @@ int main()
 			throw runtime_error("\nException! Syntax analysis failed!\n");
 		}
 
+		cout << "\nConnecting the instructions..." << endl;
+		symTab.connectInstructions();
+		cout << "Instructions connection successfull. Successor and predecessor were succesfully formed.\n" << endl;
 	}
 	catch (runtime_error e)
 	{
