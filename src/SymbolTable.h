@@ -8,6 +8,24 @@
 #include "Types.h"
 #include <vector>
 
+/*
+* Forward declaration
+*/
+class SymbolTable;
+
+/*
+* 
+*/
+class ProgramData {
+public:
+	virtual void accept(class Visitor& v) = 0;
+};
+
+class Visitor {
+public:
+	virtual void visit(SymbolTable& data) = 0;
+};
+
 
 /*
 * List of paris for label and function names, 
@@ -24,7 +42,7 @@ typedef std::list<std::string> Functions;
 /*
 * Class that holds various information about instructions, variables, functions
 */
-class SymbolTable {
+class SymbolTable :public ProgramData{
 public:
 
 	/*
@@ -36,6 +54,11 @@ public:
 	* Destructor that deletes instructions,memVariables and regVariables
 	*/
 	~SymbolTable();
+
+	void accept(Visitor& v) override {
+		v.visit(*this);
+	}
+
 
 	/*
 	* Function that fills successor and predecessor sets

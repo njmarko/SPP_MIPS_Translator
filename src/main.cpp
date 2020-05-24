@@ -4,7 +4,7 @@
 #include "LexicalAnalysis.h"
 #include "SyntaxAnalysis.h"
 #include "SymbolTable.h"
-
+#include "LivenessAnalysis.h"
 using namespace std;
 
 
@@ -17,6 +17,7 @@ int main()
 
 		LexicalAnalysis lex;
 		SymbolTable symTab;
+		LivenessAnalysis livenessAnalysis;
 
 		if (!lex.readInputFile(fileName))
 			throw runtime_error("\nException! Failed to open input file!\n");
@@ -53,6 +54,8 @@ int main()
 		symTab.connectInstructions();
 		cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
 		symTab.printInstructions();
+
+		symTab.accept(livenessAnalysis);
 	}
 	catch (runtime_error e)
 	{

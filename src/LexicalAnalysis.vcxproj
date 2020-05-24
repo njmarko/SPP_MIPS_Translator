@@ -80,6 +80,7 @@
     <ClInclude Include="FiniteStateMachine.h" />
     <ClInclude Include="IR.h" />
     <ClInclude Include="LexicalAnalysis.h" />
+    <ClInclude Include="LivenessAnalysis.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="SyntaxAnalysis.h" />
     <ClInclude Include="Token.h" />
@@ -89,6 +90,7 @@
     <ClCompile Include="FiniteStateMachine.cpp" />
     <ClCompile Include="IR.cpp" />
     <ClCompile Include="LexicalAnalysis.cpp" />
+    <ClCompile Include="LivenessAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
     <ClCompile Include="SyntaxAnalysis.cpp" />
