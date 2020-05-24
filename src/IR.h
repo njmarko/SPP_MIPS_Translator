@@ -48,7 +48,8 @@ public:
 	* @param type of the variable
 	* @param value of the MEM variable
 	*/
-	Variable(std::string name, int pos, VariableType type, std::string val) : m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(val) {}
+	Variable(std::string name, int pos, VariableType type, std::string val) 
+		: m_type(type), m_name(name), m_position(pos), m_assignment(no_assign),m_value(std::stoi(val)) {}
 
 	/*
 	* Destructor for variable class
@@ -115,7 +116,7 @@ public:
 	* Getter for value of the MEM variable
 	* @returns value that the MEM holds
 	*/
-	std::string getValue();
+	int getValue();
 
 private:
 	/*
@@ -141,7 +142,7 @@ private:
 	/*
 	* Value assigned to _mem variable
 	*/
-	std::string m_value; 
+	int m_value; 
 };
 
 
@@ -174,6 +175,19 @@ public:
 		m_position(pos), m_type(type), m_dst(dst), m_src(src),parent_label(parent_lab) {}
 
 	/*
+	* Constructor with parameters that is used for creating non branching instructions
+	* @param position of the instruction
+	* @param type of the instruction that MAVN suports
+	* @param list of destination variables
+	* @param list of source variables
+	* @param name of the parent label where this instruction belongs
+	* @param number that can appear in certain types of instructions
+	*/
+	Instruction(int pos, InstructionType type, Variables& dst, Variables& src, const std::string& parent_lab, int num) :
+		m_position(pos), m_type(type), m_dst(dst), m_src(src), parent_label(parent_lab),numValue(num) {}
+
+
+	/*
 	* Constructor with parameters that is used for creating branching instructions
 	* @param position of the instruction
 	* @param type of the instruction that MAVN suports
@@ -194,9 +208,9 @@ public:
 	~Instruction();
 
 	/*
-	* Getter for the optional member ofsetNum
+	* Getter for the optional member numValue
 	*/
-	int getOffsetNum();
+	int getNumValue();
 
 	/*
 	* Getter for the optional member jumpLabel
@@ -234,8 +248,9 @@ private:
 
 	/*
 	* Optional: Number before the parenthesis in the lw r1, 0(r4); type of instructions
+	* or Number in instructions like addi rid,rid,num;
 	*/
-	int offset_num;
+	int numValue;
 
 	/*
 	* Destination set

@@ -40,7 +40,7 @@ Regs Variable::getAsignment()
 	return m_assignment;
 }
 
-std::string Variable::getValue()
+int Variable::getValue()
 {
 	return m_value;
 }
@@ -49,10 +49,12 @@ Instruction::~Instruction()
 {
 }
 
-int Instruction::getOffsetNum()
+int Instruction::getNumValue()
 {
-	return offset_num;
+	return numValue;
 }
+
+
 
 std::string Instruction::getJumpLabel()
 {

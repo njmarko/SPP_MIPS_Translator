@@ -46,7 +46,6 @@ Variable * SymbolTable::isMemVarDefined(const std::string& name)
 			return var;
 		}
 	}
-
 	return nullptr;
 }
 
@@ -118,7 +117,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 {
 	std::list<std::string>::const_iterator cit_params = params.cbegin();
 	Variable* v;
-	Instruction* ins;
+	Instruction* ins = nullptr;
 	Variables src;
 	Variables dst;
 	switch (i_type)
@@ -127,31 +126,73 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_ADD: // E → add rid, rid, rid
 		if ((v=isRegVarDefined(*cit_params))==nullptr)
 		{
-			throw std::runtime_error("Undefined first register variable in the ADD instruction: " + *cit_params);
+			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		dst.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second register variable in the ADD instruction: " + *cit_params);
+			throw std::runtime_error("Undefined second register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
-		src.emplace_back(v);
+		src.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined third register variable in the ADD instruction: " + *cit_params);
+			throw std::runtime_error("Undefined third register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
-		src.emplace_back(v);
+		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++,i_type,dst,src,getParentLabel());
 		break;
-	case I_ADDI:
+	case I_ADDI: // E → addi rid, rid, num
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		dst.push_back(v);
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error("Undefined second register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		src.push_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),std::stoi(*(++cit_params)));
 		break;
-	case I_LA:
+	case I_LA: // E → la rid, mid
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		dst.push_back(v);
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error("Undefined second memory variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		src.push_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel());
 		break;
-	case I_LI:
+	case I_LI: // E → li rid, num
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		dst.push_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),std::stoi(*(++cit_params)));
 		break;
-	case I_LW:
-		break;
-	case I_SW:
+	case I_LW: // E → lw rid, num(rid)
+	case I_SW: // E → sw rid, num(rid)
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error("Undefined first register variable in the "+ instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		dst.push_back(v);
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error("Undefined second memory variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		src.push_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel());
 		break;
 	case I_BLTZ:
 		break;
@@ -164,7 +205,9 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	default:
 		break;
 	}
-	addInstruction(ins);
+	if (ins != nullptr) {
+		addInstruction(ins);
+	}
 }
 
 void SymbolTable::addInstruction(Instruction * instr)
