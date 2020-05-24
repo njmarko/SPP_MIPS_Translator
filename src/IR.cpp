@@ -45,6 +45,7 @@ int Variable::getValue()
 	return m_value;
 }
 
+
 Instruction::~Instruction()
 {
 }
@@ -69,4 +70,15 @@ int Instruction::getPos()
 std::ostream & operator<<(std::ostream & out, const Variable & v)
 {
 	return out << v.m_name;
+}
+
+std::string varTypeToStr(Variable::VariableType type)
+{
+	switch (type)
+	{
+	case Variable::MEM_VAR:			return "memory";
+	case Variable::REG_VAR:			return "register";
+	case Variable::NO_TYPE:			return "no type";
+	default:						return "";
+	};
 }

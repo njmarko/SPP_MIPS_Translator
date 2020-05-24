@@ -10,7 +10,7 @@ bool SyntaxAnalysis::Do()
 {
 	currTok = getNextToken();
 	Q();
-	return !err;
+	return !err; //TODO: For now it just return the bool value
 }
 
 void SyntaxAnalysis::Q()
@@ -179,8 +179,7 @@ void SyntaxAnalysis::E()
 		symTab.makeInstruction(params, InstructionType::I_NOP);
 		break;
 	default:
-		printSyntaxError(currTok);
-		err = true;
+		throw std::runtime_error("Syntax error! Unexpected token: " + currTok.getValue());
 		break;
 	}
 }
@@ -203,13 +202,9 @@ void SyntaxAnalysis::eat(TokenType t)
 		}
 		else
 		{
-			printSyntaxError(currTok);
-			err = true;
+			throw std::runtime_error("Syntax error! Unexpected token: " + currTok.getValue());
 		}
 	}
 }
 
-void SyntaxAnalysis::printSyntaxError(Token t)
-{
-	std::cout << "Syntax error! Unexpected token: " << t.getValue() << std::endl;
-}
+

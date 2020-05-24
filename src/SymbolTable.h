@@ -6,6 +6,7 @@
 #include <string>
 #include <regex>
 #include "Types.h"
+#include <vector>
 
 
 /*
@@ -165,6 +166,17 @@ public:
 	* @throws runtime_exception if the name format is incorrect
 	*/
 	void addFunction(const std::string& func_name);
+
+
+	/*
+	* Creates the error message for semantic instruction errors
+	* @param position of the parameter that is insvalid (can be 0,1,2)
+	* @param type of the variable that is invalid
+	* @param instruction type needed for printing the instruction format
+	* @param name of the invalid variable
+	* @returns string representation of the error message that can be used as an runtime_error message
+	*/
+	std::string makeInstructionErrorMsg(int argPos,Variable::VariableType varType, InstructionType i_type,const std::string& faultyParam);
 private:
 
 	/*

@@ -118,6 +118,7 @@ public:
 	*/
 	int getValue();
 
+
 private:
 	/*
 	* Type of the variable that can be MEM_VAR, REG_VAR or NO_TYPE
@@ -144,6 +145,13 @@ private:
 	*/
 	int m_value; 
 };
+
+/*
+* Converts enum variable type to string
+* @param variable type
+* @returns string representation of the whole variable type
+*/
+std::string varTypeToStr(Variable::VariableType type);
 
 
 /**
@@ -298,5 +306,6 @@ private:
  * This type represents a list of instructions from program code.
  */
 typedef std::list<Instruction*> Instructions;
+
 
 #endif

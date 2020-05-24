@@ -127,17 +127,17 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_ADD: // E → add rid, rid, rid
 		if ((v=isRegVarDefined(*cit_params))==nullptr)
 		{
-			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(0,Variable::REG_VAR,i_type,*cit_params));
 		}
 		dst.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(1, Variable::REG_VAR, i_type, *cit_params));
 		}
 		src.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined third variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(2, Variable::REG_VAR, i_type, *cit_params));
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -146,12 +146,12 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_ADDI: // E → addi rid, rid, num
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
 		}
 		dst.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(1, Variable::REG_VAR, i_type, *cit_params));
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -160,12 +160,12 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_LA: // E → la rid, mid
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
 		}
 		dst.push_back(v);
 		if ((v = isMemVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second variable (memory) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(1, Variable::MEM_VAR, i_type, *cit_params));
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -174,7 +174,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_LI: // E → li rid, num
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
 		}
 		dst.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -184,13 +184,14 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_SW: // E → sw rid, num(rid)
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first variable (register) in the "+ instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
 		}
 		dst.push_back(v);
-		offsetNum = std::stoi(*(++cit_params));
+		// it has to be a number to pass the syntax analysis, so no need to check for that
+		offsetNum = std::stoi(*(++cit_params)); // gets the number before the parenthesis
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second variable (memory) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(1, Variable::REG_VAR, i_type, *cit_params));
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -205,7 +206,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		*/
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
 		}
 		dst.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -257,7 +258,7 @@ void SymbolTable::addMemVariable(const std::string& name, Variable::VariableType
 {
 	if (isMemVarDefined(name) != nullptr)
 	{
-		throw std::runtime_error("variable (memory) with the name: " + name + " is already defined!");
+		throw std::runtime_error("Variable (memory) with the name: " + name + " is already defined!");
 	}
 
 	std::regex regExp("m[0-9]+"); // varName – has sto start with letter 'm' and can be followed by any number
@@ -273,7 +274,7 @@ void SymbolTable::addRegVariable(const std::string & name, Variable::VariableTyp
 {
 	if (isRegVarDefined(name) != nullptr)
 	{
-		throw std::runtime_error("variable (register) with the name: " + name + " is already defined!");
+		throw std::runtime_error("Variable (register) with the name: " + name + " is already defined!");
 	}
 
 	std::regex regExp("r[0-9]+"); // varName – has sto start with letter 'r' and can be followed by any number
@@ -319,4 +320,16 @@ void SymbolTable::addFunction(const std::string& func_name)
 	functions.emplace_back(func_name);
 	// position of the first instruction that follows will be added when the instruction is added
 	labels.emplace_back(func_name,-1); 
+}
+
+std::string SymbolTable::makeInstructionErrorMsg(int argPos, Variable::VariableType varType, InstructionType i_type, const std::string & faultyParam)
+{
+	std::vector <std::string> posName = { "first", "second","third" };
+	if (argPos >=0 && argPos <=2)
+	{
+		return std::string("Undefined "+posName[argPos] +" variable (" + varTypeToStr(varType) + ") in the " + instrTypeToStr(i_type) + " instruction: " + faultyParam);
+	}
+	else {
+		return std::string("Undefined variable (" + varTypeToStr(varType) + ") in the " + instrTypeToStr(i_type) + " instruction: " + faultyParam);
+	}
 }
