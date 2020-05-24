@@ -190,6 +190,17 @@ public:
 	* @returns string representation of the error message that can be used as an runtime_error message
 	*/
 	std::string makeInstructionErrorMsg(int argPos,Variable::VariableType varType, InstructionType i_type,const std::string& faultyParam);
+
+	/*
+	* Used for printing out all the instrucitons contained in class SymbolTable
+	*/
+	void printInstructions();
+
+	/*
+	* Used for printing out all the instrucitons
+	* @param cosnt reference to a List of instruction pointers
+	*/
+	void printInstructions(const Instructions& instrs);
 private:
 
 	/*

@@ -84,7 +84,7 @@ Instruction * SymbolTable::getInstrFromLabel(const std::string & label)
 			if ((*cit).second == -1) continue; 
 			for (Instructions::iterator instr_it = instructions.begin();instr_it != instructions.end();++instr_it)
 			{
-				if ((*instr_it)->getNumValue() >= (*cit).second) // if the instruction was removed it will take the next one
+				if ((*instr_it)->getPos() >= (*cit).second) // if the instruction was removed it will take the next one
 				{
 					return *instr_it;
 				}
@@ -398,5 +398,20 @@ std::string SymbolTable::makeInstructionErrorMsg(int argPos, Variable::VariableT
 	}
 	else {
 		return std::string("Undefined variable (" + varTypeToStr(varType) + ") in the " + instrTypeToStr(i_type) + " instruction: " + faultyParam);
+	}
+}
+
+void SymbolTable::printInstructions()
+{
+	printInstructions(instructions);
+}
+
+void SymbolTable::printInstructions(const Instructions& instrs)
+{
+	for each (Instruction* var in instrs)
+	{
+		printf("-----------------------------------------------\n");
+		var->printInstruction();
+		printf("-----------------------------------------------\n");
 	}
 }

@@ -82,6 +82,53 @@ void Instruction::addPred(Instruction * instr)
 	m_pred.push_back(instr);
 }
 
+void Instruction::printInstruction()
+{
+	std::cout << "Position:\t" <<  m_position;
+
+	std::cout << "\n\nType: " << instrTypeToStr(m_type);
+
+
+	std::cout << "\n\n\nPRED:\t";
+	printInstructionsPos(m_pred);
+
+
+	std::cout << "\n\nSUCC:\t";
+	printInstructionsPos(m_succ);
+
+
+	std::cout << "\n\nUSE:\t";
+	printVarNames(m_use);
+	
+
+	std::cout << "\nDEF:\t";
+	printVarNames(m_def);
+
+	std::cout << "\nIN:\t";
+	printVarNames(m_in);
+
+	std::cout << "\nOUT:\t";
+	printVarNames(m_out);
+	std::cout << std::endl;
+}
+
+void Instruction::printInstructionsPos(const Instructions & instrs)
+{
+	for each (Instruction* var in instrs)
+	{
+		std::cout << var->getPos() << " ";
+	}
+}
+
+void Instruction::printVarNames(const Variables & vars)
+{
+	for each (Variable* var in vars)
+	{
+		std::cout << *var << " ";
+	}
+	std::cout << std::endl;
+}
+
 std::ostream & operator<<(std::ostream & out, const Variable & v)
 {
 	return out << v.m_name;

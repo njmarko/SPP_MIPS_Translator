@@ -160,6 +160,12 @@ std::string varTypeToStr(Variable::VariableType type);
 typedef std::list<Variable*> Variables;
 
 
+class Instruction; // declaration to resolve scope problems
+/**
+* This type represents a list of instructions from program code.
+*/
+typedef std::list<Instruction*> Instructions;
+
 /**
  * This class represents one instruction in program code.
  */
@@ -251,6 +257,23 @@ public:
 	* @param poinster to the predecesor instruction
 	*/
 	void addPred(Instruction* instr);
+
+	/*
+	* Used for printing out a single instruction with its sets of variables
+	*/
+	void printInstruction();
+
+	/*
+	* Used for printing out successor and predecessor instruction possitions
+	*/
+	void printInstructionsPos(const Instructions& instrs);
+
+	/*
+	* Used for printing out different sets of variables contained in Instruction class
+	* these sets are: Destination, Source, Use, Def, In, Out
+	* @param const reference to a list of pointers of variables
+	*/
+	void printVarNames(const Variables& vars);
 private:
 	/*
 	* Position of the Instruction
@@ -322,10 +345,7 @@ private:
 };
 
 
-/**
- * This type represents a list of instructions from program code.
- */
-typedef std::list<Instruction*> Instructions;
+
 
 
 #endif

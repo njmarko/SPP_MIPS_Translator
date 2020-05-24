@@ -12,7 +12,7 @@ int main()
 {
 	try
 	{
-		std::string fileName = ".\\..\\examples\\simple.mavn";
+		std::string fileName = ".\\..\\examples\\multiply.mavn";
 		bool retVal = false;
 
 		LexicalAnalysis lex;
@@ -37,6 +37,7 @@ int main()
 		}
 
 		SyntaxAnalysis syn(lex,symTab);
+		cout << "\nPerforming syntax analysis..." << endl;
 		retVal = syn.Do();
 
 		if (retVal)
@@ -50,7 +51,8 @@ int main()
 
 		cout << "\nConnecting the instructions..." << endl;
 		symTab.connectInstructions();
-		cout << "Instructions connection successfull. Successor and predecessor were succesfully formed.\n" << endl;
+		cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
+		symTab.printInstructions();
 	}
 	catch (runtime_error e)
 	{
