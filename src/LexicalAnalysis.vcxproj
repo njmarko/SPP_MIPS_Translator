@@ -93,6 +93,7 @@
     <ClCompile Include="SymbolTable.cpp" />
     <ClCompile Include="SyntaxAnalysis.cpp" />
     <ClCompile Include="Token.cpp" />
+    <ClCompile Include="Types.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

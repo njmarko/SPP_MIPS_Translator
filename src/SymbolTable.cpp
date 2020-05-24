@@ -120,23 +120,24 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	Instruction* ins = nullptr;
 	Variables src;
 	Variables dst;
+	int offsetNum;
 	switch (i_type)
 	{
 	case I_SUB: // E → sub rid, rid, rid
 	case I_ADD: // E → add rid, rid, rid
 		if ((v=isRegVarDefined(*cit_params))==nullptr)
 		{
-			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		dst.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined second variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		src.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined third register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined third variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -145,12 +146,12 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_ADDI: // E → addi rid, rid, num
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		dst.push_back(v);
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined second variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -159,12 +160,12 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_LA: // E → la rid, mid
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		dst.push_back(v);
-		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		if ((v = isMemVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second memory variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined second variable (memory) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -173,7 +174,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_LI: // E → li rid, num
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first register variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		dst.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
@@ -183,22 +184,45 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	case I_SW: // E → sw rid, num(rid)
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
-			throw std::runtime_error("Undefined first register variable in the "+ instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined first variable (register) in the "+ instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		dst.push_back(v);
+		offsetNum = std::stoi(*(++cit_params));
 		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
 		{
-			throw std::runtime_error("Undefined second memory variable in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+			throw std::runtime_error("Undefined second variable (memory) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),offsetNum);
+		break;
+	case I_BLTZ: // E → bltz rid, id
+		/*
+		* Existance of the lable that is being jumped to will not be checked here
+		* because the target lable can be declared after this instruction.
+		* Existance of the lable will be checked in the later steps
+		* one all instructions,labels and variables have been added
+		*/
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error("Undefined first variable (register) in the " + instrTypeToStr(i_type) + " instruction: " + *cit_params);
+		}
+		dst.push_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, *(++cit_params), getParentLabel());
+		break;
+	case I_B: // E → b id
+		/*
+		* Existance of the lable that is being jumped to will not be checked here
+		* because the target lable can be declared after this instruction.
+		* Existance of the lable will be checked in the later steps 
+		* one all instructions,labels and variables have been added
+		*/
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, *(cit_params),getParentLabel());
+		break;
+	case I_NOP: // E → nop
 		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel());
-		break;
-	case I_BLTZ:
-		break;
-	case I_B:
-		break;
-	case I_NOP:
 		break;
 	case I_NO_TYPE: // just report the error if this happens
 		break;
@@ -233,13 +257,13 @@ void SymbolTable::addMemVariable(const std::string& name, Variable::VariableType
 {
 	if (isMemVarDefined(name) != nullptr)
 	{
-		throw std::runtime_error("Memory variable with the name: " + name + " is already defined!");
+		throw std::runtime_error("variable (memory) with the name: " + name + " is already defined!");
 	}
 
 	std::regex regExp("m[0-9]+"); // varName – has sto start with letter 'm' and can be followed by any number
 	if (!std::regex_match(name,regExp))
 	{
-		throw std::runtime_error("Incorrect memory variable name: " + name);
+		throw std::runtime_error("Incorrect variable (memory) name: " + name);
 	}
 
 	memVariables.push_back(new Variable(name,-1,type,value));
@@ -249,13 +273,13 @@ void SymbolTable::addRegVariable(const std::string & name, Variable::VariableTyp
 {
 	if (isRegVarDefined(name) != nullptr)
 	{
-		throw std::runtime_error("Register variable with the name: " + name + " is already defined!");
+		throw std::runtime_error("variable (register) with the name: " + name + " is already defined!");
 	}
 
 	std::regex regExp("r[0-9]+"); // varName – has sto start with letter 'r' and can be followed by any number
 	if (!std::regex_match(name, regExp))
 	{
-		throw std::runtime_error("Incorrect register variable name: " + name);
+		throw std::runtime_error("Incorrect variable (register) name: " + name);
 	}
 
 	regVariables.push_back(new Variable(name, -1, type));
