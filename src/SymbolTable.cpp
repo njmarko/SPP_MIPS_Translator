@@ -425,9 +425,9 @@ void SymbolTable::printInstructions(const Instructions& instrs)
 {
 	for each (Instruction* var in instrs)
 	{
-		std::cout << "===============================================\n";
+		std::cout << std::string(60,'=')<< std::endl;
 		var->printInstruction();
-		std::cout << "===============================================\n";
+		std::cout << std::string(60, '=') << std::endl;
 	}
 }
 

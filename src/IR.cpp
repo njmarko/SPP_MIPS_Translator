@@ -1,5 +1,18 @@
 #include "IR.h"
 
+void Variable::printFullInfo()
+{
+	std::cout << "\tName: " << m_name
+		<< "\tPos:" << m_position << "\tAssignment: ";
+	if (m_assignment <= 0)
+	{
+		std::cout << "no assignment"<< std::endl;
+	}
+	else {
+		std::cout << "t" << m_assignment<< std::endl;
+	}
+}
+
 void Variable::set_name(std::string name)
 {
 	m_name = name;
@@ -20,27 +33,27 @@ void Variable::set_assignment(Regs reg)
 	m_assignment = reg;
 }
 
-Variable::VariableType Variable::getType()
+Variable::VariableType Variable::getType() const
 {
 	return m_type;
 }
 
-std::string Variable::getName()
+std::string Variable::getName() const
 {
 	return m_name;
 }
 
-int Variable::getPos()
+int Variable::getPos() const
 {
 	return m_position;
 }
 
-Regs Variable::getAsignment()
+Regs Variable::getAsignment() const
 {
 	return m_assignment;
 }
 
-int Variable::getValue()
+int Variable::getValue() const
 {
 	return m_value;
 }
@@ -109,12 +122,29 @@ void Instruction::addPred(Instruction * instr)
 
 void Instruction::printInstruction()
 {
-	std::cout << "Position:\t" <<  m_position;
 
-	std::cout << "\n\nType: " << instrTypeToStr(m_type);
+	std::cout << "Type: " << instrTypeToStr(m_type);
 
 
-	std::cout << "\n\nPRED:\t";
+	std::cout << "\t\tPosition: " <<  m_position;
+
+	std::cout  << std::endl;
+	std::cout << std::string(60, '-') << std::endl;
+	int counter = 1;
+	for each (Variable* var in m_dst)
+	{
+		std::cout << "Dst" << counter++ << ": ";
+		var->printFullInfo();
+	}
+	counter = 1;
+	for each (Variable* var in m_src)
+	{
+		std::cout << "Src" << counter++ << ": ";
+		var->printFullInfo();
+	}
+
+	std::cout << std::string(60, '-') << std::endl;
+	std::cout << "PRED:\t";
 	printInstructionsPos(m_pred);
 
 
@@ -134,7 +164,6 @@ void Instruction::printInstruction()
 
 	std::cout << "OUT:\t";
 	printVarNames(m_out);
-	std::cout << std::endl;
 }
 
 void Instruction::printInstructionsPos(const Instructions & instrs)

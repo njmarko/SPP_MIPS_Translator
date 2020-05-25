@@ -66,6 +66,11 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const Variable& v);
 
 	/*
+	* Used for printing out the variable assignment for dst and src sets as part of an instruction print message
+	*/
+	void printFullInfo();
+
+	/*
 	* Setter for the name of the variable
 	* @param name of the variable
 	*/
@@ -93,31 +98,31 @@ public:
 	* Getter for variable type
 	* @returns type of the variable that can be MEM_VAR, REG_VAR or NO_TYPE
 	*/
-	Variable::VariableType getType();
+	Variable::VariableType getType() const;
 
 	/*
 	* Getter for variable name
 	* @returns name of the variable
 	*/
-	std::string getName();
+	std::string getName() const;
 
 	/*
 	* Getter for variable position in the interference matrix
 	* @returns position in the interference matrix
 	*/
-	int getPos();
+	int getPos() const;
 
 	/*
 	* Getter for register asigned to the variable
 	* @returns register that was assigned to the variable
 	*/
-	Regs getAsignment();
+	Regs getAsignment() const;
 
 	/*
 	* Getter for value of the MEM variable
 	* @returns value that the MEM holds
 	*/
-	int getValue();
+	int getValue() const;
 
 
 private:
@@ -314,6 +319,9 @@ public:
 	* Goes through source variables and moves them to the use set
 	*/
 	void fillUseVariables();
+
+
+
 private:
 	/*
 	* Position of the Instruction
