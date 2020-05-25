@@ -4,6 +4,7 @@
 #include "Types.h"
 #include <string>
 #include <vector>
+#include <sstream>
 
 /**
  * This class represents one variable from program code.
@@ -320,7 +321,17 @@ public:
 	*/
 	void fillUseVariables();
 
+	/*
+	* Creates the MIPS string representation of the instruction based on type
+	* @returns string that represents MIPS instruction
+	*/
+	std::string convertToMIPSString();
 
+	/*
+	* Getter for getting the name of the label or function this instruction belongs to
+	* @returns label or function string name
+	*/
+	std::string getParentLabel();
 
 private:
 	/*

@@ -84,6 +84,9 @@ int main(int argc, char* argv[])
 		symTab.printInstructions();
 		symTab.getInterferenceGraph().printIGMatrix();
 
+		std::cout << "\nCreating MIPS output file..." << endl;
+		symTab.accept(fileHandler);
+		std::cout << "\nOutput file with the MIPS code successfully created!" << endl;
 	}
 	catch (runtime_error e)
 	{

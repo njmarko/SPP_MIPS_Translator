@@ -157,8 +157,8 @@ public:
 	Variables& getRegVariables();
 
 	/*
-	* Getter for the labels
-	* @returns map<string,int> of labels that hold their positions in the code
+	* Getter for the list that holds label and function names and positions of their first instructions
+	* @returns list of pairs<string,int> of labels that hold their positions in the code
 	*/
 	Labels& getLabels();
 
@@ -204,7 +204,7 @@ public:
 	void addRegVariable(const std::string& name, Variable::VariableType type);
 
 	/*
-	* Method for adding a new label to the labels collections
+	* Method for adding a new label or a function to the labels collections
 	* @param label name
 	* @throws runtime_exception if the variable or function with the same name already exists
 	* @throws runtime_exception if the name format is incorrect
@@ -280,7 +280,7 @@ private:
 	Variables regVariables;
 
 	/*
-	* List of pairs that contain name of the variable 
+	* List of pairs that contain name of the label or a function
 	* and the position of the first instruction
 	*/
 	Labels labels;

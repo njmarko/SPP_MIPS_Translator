@@ -2,8 +2,44 @@
 
 void MyFileHandler::visit(SymbolTable & symTab)
 {
-	//TODO
+	std::ofstream out(outFilePath);
+
+	for each (std::string fun in symTab.getFunctions())
+	{
+		out << ".globl\t" << fun << std::endl;
+	}
+	out << "\n.data\n";
+	for each (Variable* var in symTab.getMemVariables())
+	{
+		out << var->getName() << ":\t\t" << ".word " << var->getValue() << std::endl;
+	}
+
+	Instructions::const_iterator cit = symTab.getInstructions().cbegin();
+	Instructions::const_iterator end = symTab.getInstructions().cend();
+	out << "\n.text\n";
+
+	// if there was were instructions in the text section before any label or function
+	while (cit != end  && (*cit)->getParentLabel()=="")
+	{
+		out << (*cit++)->convertToMIPSString() << std::endl;
+	}
+	for each (std::pair<std::string,int> var in symTab.getLabels())
+	{
+		out << var.first << ":" << std::endl;
+		if (var.second != -1) // if the label or function has at least one associated instructions
+		{
+			while (cit != end && (*cit)->getParentLabel() == var.first)
+			{
+				out << (*cit++)->convertToMIPSString() << std::endl;
+			}
+		}
+	}
+	// exit call so the qtspim doesn't compalin
+	out << "\tli  $v0, 10\n\tsyscall";
+
 }
+
+
 
 MyFileHandler::MyFileHandler()
 {

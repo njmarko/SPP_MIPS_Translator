@@ -4,6 +4,7 @@
 #include <string>
 #include "IR.h"
 #include "SymbolTable.h"
+#include <fstream>
 
 /*
 * Vector of filename strings. It is used for reading the program code from filenames in the folder
@@ -25,6 +26,12 @@ public:
 	* Here it is used for writing the code into file
 	*/
 	void visit(SymbolTable& symTab)override;
+
+
+	/*
+	* Creates the mips file based on the data gathered in the Symbol table
+	*/
+	void MakeMIPSFile();
 
 	/*
 	* Default constructor

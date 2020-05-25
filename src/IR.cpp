@@ -1,4 +1,4 @@
-#include "IR.h"
+﻿#include "IR.h"
 
 void Variable::printFullInfo()
 {
@@ -11,6 +11,11 @@ void Variable::printFullInfo()
 	else {
 		std::cout << "t" << m_assignment - 1<< std::endl;
 	}
+}
+
+std::ostream & operator<<(std::ostream & out, const Variable & v)
+{
+	return out << v.m_name;
 }
 
 void Variable::set_name(std::string name)
@@ -199,10 +204,188 @@ void Instruction::fillUseVariables()
 	}
 }
 
-std::ostream & operator<<(std::ostream & out, const Variable & v)
+std::string Instruction::convertToMIPSString()
 {
-	return out << v.m_name;
+	std::stringstream ss; // string stream used to build MIPS instructions
+	bool first;
+	switch (m_type)
+	{
+	case I_NO_TYPE:
+		break;
+	case I_ADD: // E → add rid, rid, rids
+		ss << "\tadd\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+			
+		}
+		for each (Variable* var in m_src)
+		{
+				ss << ", $t" << var->getAsignment() - 1;
+		}
+		break;
+	case I_ADDI: // E → addi rid, rid, num
+		ss << "\taddi\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+
+		}
+		for each (Variable* var in m_src)
+		{
+			ss << ", $t" << var->getAsignment() - 1;
+		}
+		ss << ", "  << getNumValue();
+		break;
+	case I_SUB: // E → sub rid, rid, rid
+		ss << "\tsub\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+
+		}
+		for each (Variable* var in m_src)
+		{
+			ss << ", $t" << var->getAsignment() - 1;
+		}
+		break;
+	case I_LA: // E → la rid, mids
+		ss << "\tla\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+
+		}
+		for each (Variable* var in m_src)
+		{
+				ss << ", " << var->getName();
+		}
+		break;
+	case I_LI: // E → li rid, num
+		ss << "\tli\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+		}
+		ss << " ," << getNumValue();
+		break;
+	case I_LW: // E → lw rid, num(rid)
+		ss << "\tlw\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+		}
+		ss << ", " << getNumValue();
+		ss << "($t" << (*m_src.cbegin())->getAsignment() - 1 << ")";
+		break;
+	case I_SW: // E → sw rid, num(rid)
+		ss << "\tsw\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+		}
+		ss << ", " << getNumValue();
+		ss << "($t" << (*m_src.cbegin())->getAsignment() - 1 << ")";
+		break;
+	case I_BLTZ: // E → bltz rid, id
+		ss << "\tbltz\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+		}
+		ss << ", " << getJumpLabel();
+		break;
+	case I_B: // E → b id
+		ss << "\tlw\t";
+		ss << ", " << getJumpLabel();
+		break;
+	case I_NOP:
+		ss << "\tnop";
+		break;
+	default:
+		break;
+	}
+	return ss.str();
 }
+
+std::string Instruction::getParentLabel()
+{
+	return parent_label;
+}
+
+
 
 std::string varTypeToStr(Variable::VariableType type)
 {
@@ -214,6 +397,8 @@ std::string varTypeToStr(Variable::VariableType type)
 	default:						return "";
 	};
 }
+
+
 
 InterferenceGraph::InterferenceGraph()
 {
