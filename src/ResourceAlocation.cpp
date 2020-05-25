@@ -89,21 +89,23 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 
 void ResourceAllocation::selectRegisters(InterferenceGraph & ig, SimplificationStack & ss)
 {
-
+	// set is used because we don't need duplicate register names
 	std::set<Regs> allocated_regs;
 
-
-	while (!ss.empty()) { //dok ne prodjem kroz sve variable
+	// we need to go through the enitre simplification stacks
+	while (!ss.empty()) { 
 		Variable* v = ss.top();
 		ss.pop();
 		int color = -1;
-		allocated_regs.clear();
+		allocated_regs.clear(); // each register has different interferences, so this set gets cleared
 		for (Variables::const_iterator cit = ig.getVars()->cbegin(); cit != ig.getVars()->cend(); ++cit) {
 			int pos = (*cit)->getPos();
-			if (ig.getIGMatrix()[v->getPos()][pos] == __INTERFERENCE__ && (*cit)->getAsignment() != Regs(0)) { //ako postoji smetnja za tu varijablu
+			if (ig.getIGMatrix()[v->getPos()][pos] == __INTERFERENCE__ && (*cit)->getAsignment() != Regs(0)) { 
+				// if the interference exists between the two variables, and it has an assigned register
 				allocated_regs.emplace((*cit)->getAsignment());
 			}
 		}
+		// look for the lowest numbered register color that is not taken by the neighbours of the variable
 		bool taken = false;
 		for (int i = 0; i < __REG_NUMBER__; i++)
 		{
