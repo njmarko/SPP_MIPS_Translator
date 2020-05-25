@@ -224,12 +224,23 @@ public:
 	* @param cosnt reference to a List of instruction pointers
 	*/
 	void printInstructions(const Instructions& instrs);
+
+	/*
+	* Getter for interference graph
+	* @returns reference to the interference graph
+	*/
+	InterferenceGraph& getInterferenceGraph();
 private:
 
 	/*
 	* Counter for instructions that is incremented whenever new instruction is added
 	*/
 	int instrCount;
+
+	/*
+	* Counter for register variables that is incremented whenever new register is added
+	*/
+	int regVarsCount;
 
 	/*
 	* List of instruction pointers that were created from the code
@@ -256,6 +267,12 @@ private:
 	* List of function names
 	*/
 	Functions functions;
+
+	/*
+	* Interference graph used for resource allocation
+	* It contains a matrix with interferences
+	*/
+	InterferenceGraph ig;
 
 };
 

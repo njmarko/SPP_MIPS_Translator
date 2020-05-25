@@ -2,7 +2,7 @@
 
 
 
-SymbolTable::SymbolTable():instrCount(0)
+SymbolTable::SymbolTable():instrCount(0),regVarsCount(0)
 {
 }
 
@@ -358,8 +358,8 @@ void SymbolTable::addRegVariable(const std::string & name, Variable::VariableTyp
 	{
 		throw std::runtime_error("Incorrect variable (register) name: " + name);
 	}
-
-	regVariables.push_back(new Variable(name, -1, type));
+	// increments the regVarsCount
+	regVariables.push_back(new Variable(name, regVarsCount++, type));
 }
 
 void SymbolTable::addLabel(const std::string& lab_name)
@@ -419,8 +419,13 @@ void SymbolTable::printInstructions(const Instructions& instrs)
 {
 	for each (Instruction* var in instrs)
 	{
-		printf("-----------------------------------------------\n");
+		std::cout << "===============================================\n";
 		var->printInstruction();
-		printf("-----------------------------------------------\n");
+		std::cout << "===============================================\n";
 	}
+}
+
+InterferenceGraph & SymbolTable::getInterferenceGraph()
+{
+	return ig;
 }

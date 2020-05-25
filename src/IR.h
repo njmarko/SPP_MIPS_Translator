@@ -419,6 +419,19 @@ public:
 	* @returns pointer to the list of variable pointers
 	*/
 	Variables* getVars();
+
+	/*
+	* Setter for interference matrix
+	* @param reference to the new interference matrix
+	*/
+	void setMatrix(InterferenceMatrix& m);
+
+
+	/*
+	* Setter for Variables
+	* @param pointer to the list of variable pointers
+	*/
+	void setVars(Variables* v);
 private:
 	InterferenceMatrix matrix;
 	Variables* vars;

@@ -114,25 +114,25 @@ void Instruction::printInstruction()
 	std::cout << "\n\nType: " << instrTypeToStr(m_type);
 
 
-	std::cout << "\n\n\nPRED:\t";
+	std::cout << "\n\nPRED:\t";
 	printInstructionsPos(m_pred);
 
 
-	std::cout << "\n\nSUCC:\t";
+	std::cout << "\nSUCC:\t";
 	printInstructionsPos(m_succ);
 
 
-	std::cout << "\n\nUSE:\t";
+	std::cout << "\nUSE:\t";
 	printVarNames(m_use);
 	
 
-	std::cout << "\nDEF:\t";
+	std::cout << "DEF:\t";
 	printVarNames(m_def);
 
-	std::cout << "\nIN:\t";
+	std::cout << "IN:\t";
 	printVarNames(m_in);
 
-	std::cout << "\nOUT:\t";
+	std::cout << "OUT:\t";
 	printVarNames(m_out);
 	std::cout << std::endl;
 }
@@ -223,4 +223,14 @@ InterferenceMatrix & InterferenceGraph::getIGMatrix()
 Variables * InterferenceGraph::getVars()
 {
 	return vars;
+}
+
+void InterferenceGraph::setMatrix(InterferenceMatrix & m)
+{
+	matrix = m;
+}
+
+void InterferenceGraph::setVars(Variables * v)
+{
+	vars = v;
 }

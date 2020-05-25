@@ -5,6 +5,7 @@
 #include "SyntaxAnalysis.h"
 #include "SymbolTable.h"
 #include "LivenessAnalysis.h"
+#include "ResourceAlocation.h"
 using namespace std;
 
 
@@ -18,6 +19,7 @@ int main()
 		LexicalAnalysis lex;
 		SymbolTable symTab;
 		LivenessAnalysis livenessAnalysis;
+		ResourceAllocation resourceAllocation;
 
 		if (!lex.readInputFile(fileName))
 			throw runtime_error("\nException! Failed to open input file!\n");
@@ -59,6 +61,12 @@ int main()
 		symTab.accept(livenessAnalysis);
 		cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
 		symTab.printInstructions();
+
+		cout << "\nDoing Resource allocation..." << endl;
+		symTab.accept(resourceAllocation);
+		cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
+		symTab.printInstructions();
+
 	}
 	catch (runtime_error e)
 	{
