@@ -185,3 +185,42 @@ std::string varTypeToStr(Variable::VariableType type)
 	default:						return "";
 	};
 }
+
+void InterferenceGraph::printIGMatrix()
+{
+	std::string line = "====================================";
+	for (size_t i = 10; i < matrix.size(); i++)
+	{
+		line += "==";
+	}
+
+	std::cout << line << "\nInterference matrix: \n" << line << std::endl;
+
+	for each (Variable* var in *vars)
+	{
+		std::cout << "\t" << *var;
+	}
+	std::cout << std::endl;
+	
+	Variables::const_iterator vcit = (*vars).cbegin();
+	for (size_t i = 0; i < matrix.size(); ++i,++vcit)
+	{
+		std::cout << *(*vcit);
+		for (size_t j = 0; j < matrix[i].size(); ++j)
+		{
+			std::cout << "\t" << matrix[i][j];
+		}
+		std::cout << std::endl;
+	}
+	std::cout << line << std::endl;
+}
+
+InterferenceMatrix & InterferenceGraph::getIGMatrix()
+{
+	return matrix;
+}
+
+Variables * InterferenceGraph::getVars()
+{
+	return vars;
+}

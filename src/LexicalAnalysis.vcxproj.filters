@@ -42,6 +42,9 @@
     <ClInclude Include="LivenessAnalysis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceAlocation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FiniteStateMachine.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LivenessAnalysis.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceAlocation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

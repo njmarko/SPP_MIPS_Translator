@@ -3,6 +3,7 @@
 
 #include "Types.h"
 #include <string>
+#include <vector>
 
 /**
  * This class represents one variable from program code.
@@ -385,6 +386,42 @@ private:
 
 
 
+/*
+* Stack of Variable pointers that are created after the simplification phase
+* in the resource allocation algorithm
+*/
+typedef std::stack<Variable*> SimplificationStack;
 
+/*
+* Matrix used for tracking interferences between registers
+*/
+typedef std::vector<std::vector<int>> InterferenceMatrix;
+
+/*
+* Interference graph that is used in resource allocation algorithm
+*/
+class InterferenceGraph {
+public:
+	/*
+	* Prints the Interference matrix
+	*/
+	void printIGMatrix();
+
+	/*
+	* Getter for the Interference matrix
+	* @returns reference to the interference matrix
+		that is represented by a vector of vectors of ints
+	*/
+	InterferenceMatrix& getIGMatrix();
+
+	/*
+	* Getter for the variables
+	* @returns pointer to the list of variable pointers
+	*/
+	Variables* getVars();
+private:
+	InterferenceMatrix matrix;
+	Variables* vars;
+};
 
 #endif
