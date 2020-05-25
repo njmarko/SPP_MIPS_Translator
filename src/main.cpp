@@ -6,23 +6,17 @@
 #include "SymbolTable.h"
 #include "LivenessAnalysis.h"
 #include "ResourceAlocation.h"
-
+#include "MyFileHandler.h"
 
 
 using namespace std;
 
 
-
-
 int main()
 {
 
-
-
-
 	try
 	{
-
 
 		std::string fileName = ".\\..\\examples\\simple.mavn";
 		bool retVal = false;
@@ -31,11 +25,12 @@ int main()
 		SymbolTable symTab;
 		LivenessAnalysis livenessAnalysis;
 		ResourceAllocation resourceAllocation;
-
+		MyFileHandler fileHandler(".\\..\\examples\\zerobytes\\");
+		
 
 		//if (!lex.readInputFile(fileName))
 		//	throw runtime_error("\nException! Failed to open input file!\n");
-		if (!lex.readInputFileName(fileName))
+		if (!lex.readInputFileName(fileHandler.createProgramFromFilenames()))
 			throw runtime_error("\nException! Failed to open input file!\n");
 		lex.initialize();
 

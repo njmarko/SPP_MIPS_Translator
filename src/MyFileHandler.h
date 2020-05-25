@@ -27,6 +27,18 @@ public:
 	void visit(SymbolTable& symTab)override;
 
 	/*
+	* Default constructor
+	*/
+	MyFileHandler();
+
+	/*
+	* Constructor that takes the folder path where the files are located.
+	* It automatically loads the data from those files
+	* @param path to the folder where the files with code in their name are located
+	*/
+	MyFileHandler(std::string folder_path);
+
+	/*
 	* Function that reads the filenames in the folder path and adds them to the vector of strings
 	* Solution found at: http://www.cplusplus.com/forum/windows/189681/
 	* @param path name
@@ -39,7 +51,7 @@ public:
 	* @param vector of filename strings
 	* @returns single string representation of the program
 	*/
-	std::string createProgramFromFilenames(Filenames fnames);
+	std::string createProgramFromFilenames();
 
 	/*
 	* Getter for the string that represents all the loaded code
@@ -61,6 +73,6 @@ private:
 	/*
 	* Code from all the filenames in the folder in the form of one string
 	*/
-	std::string codeFromFilename;
+	std::string codeFromFilenames;
 
 };

@@ -5,11 +5,22 @@ void MyFileHandler::visit(SymbolTable & symTab)
 	//TODO
 }
 
+MyFileHandler::MyFileHandler()
+{
+}
+
+MyFileHandler::MyFileHandler(std::string folder_path)
+{
+	get_filenames(folder_path);
+	createProgramFromFilenames();
+}
+
 std::vector<std::string> MyFileHandler::get_filenames(Path path)
 {
+
 	namespace stdfs = std::experimental::filesystem;
 
-	std::vector<std::string> filenames;
+	fileNames.clear();
 
 	// http://en.cppreference.com/w/cpp/experimental/fs/directory_iterator
 	const stdfs::directory_iterator end{};
@@ -19,21 +30,22 @@ std::vector<std::string> MyFileHandler::get_filenames(Path path)
 		// http://en.cppreference.com/w/cpp/experimental/fs/is_regular_file 
 		if (stdfs::is_regular_file(*iter)) // comment out if all names (names of directories tc.) are required
 			// erases the path part of the full file path,leaving only the filename
-			filenames.push_back(iter->path().string().erase(0, path.string().size())); 
+			fileNames.push_back(iter->path().string().erase(0, path.string().size()));
 	}
 
-	return filenames;
+	return fileNames;
 }
 
-std::string MyFileHandler::createProgramFromFilenames(Filenames fnames)
+std::string MyFileHandler::createProgramFromFilenames()
 {
+	codeFromFilenames = "";
 	for (auto& name : fileNames) {
-		codeFromFilename += name;
+		codeFromFilenames += name;
 	}
-	return codeFromFilename;
+	return codeFromFilenames;
 }
 
 std::string MyFileHandler::getCodeFromFilename()
 {
-	return codeFromFilename;
+	return codeFromFilenames;
 }
