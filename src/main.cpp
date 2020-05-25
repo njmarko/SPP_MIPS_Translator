@@ -6,13 +6,24 @@
 #include "SymbolTable.h"
 #include "LivenessAnalysis.h"
 #include "ResourceAlocation.h"
+
+
+
 using namespace std;
+
+
 
 
 int main()
 {
+
+
+
+
 	try
 	{
+
+
 		std::string fileName = ".\\..\\examples\\simple.mavn";
 		bool retVal = false;
 
@@ -21,9 +32,11 @@ int main()
 		LivenessAnalysis livenessAnalysis;
 		ResourceAllocation resourceAllocation;
 
-		if (!lex.readInputFile(fileName))
-			throw runtime_error("\nException! Failed to open input file!\n");
 
+		//if (!lex.readInputFile(fileName))
+		//	throw runtime_error("\nException! Failed to open input file!\n");
+		if (!lex.readInputFileName(fileName))
+			throw runtime_error("\nException! Failed to open input file!\n");
 		lex.initialize();
 
 		retVal = lex.Do();

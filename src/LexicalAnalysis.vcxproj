@@ -81,6 +81,7 @@
     <ClInclude Include="IR.h" />
     <ClInclude Include="LexicalAnalysis.h" />
     <ClInclude Include="LivenessAnalysis.h" />
+    <ClInclude Include="MyFileHandler.h" />
     <ClInclude Include="ResourceAlocation.h" />
     <ClInclude Include="SymbolTable.h" />
     <ClInclude Include="SyntaxAnalysis.h" />
@@ -93,6 +94,7 @@
     <ClCompile Include="LexicalAnalysis.cpp" />
     <ClCompile Include="LivenessAnalysis.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyFileHandler.cpp" />
     <ClCompile Include="ResourceAlocation.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
     <ClCompile Include="SyntaxAnalysis.cpp" />

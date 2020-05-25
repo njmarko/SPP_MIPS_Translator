@@ -9,7 +9,7 @@ void Variable::printFullInfo()
 		std::cout << "no assignment"<< std::endl;
 	}
 	else {
-		std::cout << "t" << m_assignment<< std::endl;
+		std::cout << "t" << m_assignment - 1<< std::endl;
 	}
 }
 

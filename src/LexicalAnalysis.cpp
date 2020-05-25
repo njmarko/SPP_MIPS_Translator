@@ -57,6 +57,15 @@ bool LexicalAnalysis::readInputFile(string fileName)
 	return true;
 }
 
+bool LexicalAnalysis::readInputFileName(std::string filename)
+{
+	for each (char var in filename)
+	{
+		programBuffer.push_back(var);
+	}
+	return true;
+}
+
 
 Token LexicalAnalysis::getNextTokenLex()
 {

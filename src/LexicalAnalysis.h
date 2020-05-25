@@ -31,6 +31,11 @@ public:
 	bool readInputFile(std::string fileName);
 
 	/**
+	* Method for reading the code from the name of the input file
+	*/
+	bool readInputFileName(std::string filename);
+
+	/**
 	 * Use this function to get next lexical token from program source code.
 	 *
 	 * @return next lexical token in program source code
