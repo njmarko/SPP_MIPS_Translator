@@ -1,6 +1,7 @@
 #pragma once
 #include "SymbolTable.h"
 #include "IR.h"
+#include <map>
 
 /*
 * Class that will do the resource allocation
@@ -17,11 +18,21 @@ class ResourceAllocation :public Visitor {
 	void visit(SymbolTable& symTab)override;
 
 	/*
-	* Function that builds an interference graph fro mthe given instructions
+	* First phase of ResourceAllocation: Function that builds an interference graph from the given instructions
 	* @param reference to the interference graph
 	* @param reference to the list of instruction pointers
-	* @param reference to the list of variable poinsters
+	* @param reference to the list of register variable pointers
 	* @returns reference to the updated interference graph
 	*/
 	InterferenceGraph& buildInterferenceGraph(InterferenceGraph& ig, Instructions& instr, Variables& vars);
+
+	/*
+	* Second phase of ResourceAllocation: Function that builds the simplification stack
+	* @param reference to the interference graph
+	* @param reference to the list of instruction pointers
+	* @param reference to the list of register variable pointers
+	* @returns reference to the updated interference graph
+	* @throws runtime_error if the spill happens because the simplification stack could not be filled
+	*/
+	SimplificationStack& performSimplification(InterferenceGraph& ig,SimplificationStack& sims, Variables& vars);
 };

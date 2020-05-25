@@ -230,6 +230,12 @@ public:
 	* @returns reference to the interference graph
 	*/
 	InterferenceGraph& getInterferenceGraph();
+
+	/*
+	* Getter for simplification stack
+	* @returns reference to the simplification stack
+	*/
+	SimplificationStack& getSimplificationStack();
 private:
 
 	/*
@@ -273,6 +279,12 @@ private:
 	* It contains a matrix with interferences
 	*/
 	InterferenceGraph ig;
+
+	/*
+	* Simplification stack used for resource allocation
+	* It constains register variables
+	*/
+	SimplificationStack ss;
 
 };
 

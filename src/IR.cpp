@@ -188,10 +188,10 @@ std::string varTypeToStr(Variable::VariableType type)
 
 void InterferenceGraph::printIGMatrix()
 {
-	std::string line = "====================================";
-	for (size_t i = 10; i < matrix.size(); i++)
+	std::string line = "========";
+	for (size_t i = 0; i < matrix.size(); i++)
 	{
-		line += "==";
+		line += "========";
 	}
 
 	std::cout << line << "\nInterference matrix: \n" << line << std::endl;

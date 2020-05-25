@@ -429,3 +429,8 @@ InterferenceGraph & SymbolTable::getInterferenceGraph()
 {
 	return ig;
 }
+
+SimplificationStack & SymbolTable::getSimplificationStack()
+{
+	return ss;
+}

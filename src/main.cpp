@@ -66,6 +66,7 @@ int main()
 		symTab.accept(resourceAllocation);
 		cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
 		symTab.printInstructions();
+		symTab.getInterferenceGraph().printIGMatrix();
 
 	}
 	catch (runtime_error e)
