@@ -74,10 +74,10 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 		// add the variable to the simplification stack
 		sims.push(highestRank);
 		// reduce the rank of all the neighbours of the variable
-		for each (Variable* var in vars)
+		for each (std::pair<Variable*,int> p in varRang)
 		{
-			if (ig.getIGMatrix()[var->getPos()][highestRank->getPos()] == __INTERFERENCE__) {
-				--varRang[var];
+			if (ig.getIGMatrix()[p.first->getPos()][highestRank->getPos()] == __INTERFERENCE__) {
+				--varRang[p.first];
 			}
 		}
 		// remove the variable from the map
