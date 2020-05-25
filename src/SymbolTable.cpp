@@ -22,9 +22,15 @@ SymbolTable::~SymbolTable()
 	{
 		delete var;
 	}
+	// there is no need to delete simplification stack (ss)
+	// because it holds the same variables that are in the regVariables list
 	memVariables.clear();
 	regVariables.clear();
 	instructions.clear();
+}
+
+void SymbolTable::accept(Visitor & v) {
+	v.visit(*this);
 }
 
 void SymbolTable::connectInstructions()

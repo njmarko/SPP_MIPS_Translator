@@ -403,6 +403,11 @@ typedef std::vector<std::vector<int>> InterferenceMatrix;
 class InterferenceGraph {
 public:
 	/*
+	* Default constructor
+	*/
+	InterferenceGraph();
+
+	/*
 	* Prints the Interference matrix
 	*/
 	void printIGMatrix();

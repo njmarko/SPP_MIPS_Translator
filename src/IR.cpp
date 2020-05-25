@@ -186,6 +186,11 @@ std::string varTypeToStr(Variable::VariableType type)
 	};
 }
 
+InterferenceGraph::InterferenceGraph()
+{
+}
+
+
 void InterferenceGraph::printIGMatrix()
 {
 	std::string line = "========";

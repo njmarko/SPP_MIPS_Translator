@@ -14,15 +14,28 @@
 class SymbolTable;
 
 /*
-* 
+* Absract class that is used for implementing Visitor pattern
+* It forces the class to inherit the accept method that must be redefined
 */
 class ProgramData {
 public:
+	/*
+	* Pure virtual function that accepts the visitor and should call his visit function
+	* @param reference to the class that inherits the Visitor class
+	*/
 	virtual void accept(class Visitor& v) = 0;
 };
 
+/*
+* Absract class that is used for implementing Visitor pattern
+* It forces the class to inherit the visit method that must be redefined
+*/
 class Visitor {
 public:
+	/*
+	* Pure virtual function that allows the visiting class to operate on the host class
+	* @param reference to the SymbolTable class that will be the host for this visitor
+	*/
 	virtual void visit(SymbolTable& data) = 0;
 };
 
@@ -55,9 +68,12 @@ public:
 	*/
 	~SymbolTable();
 
-	void accept(Visitor& v) override {
-		v.visit(*this);
-	}
+	/*
+	* Overwrited pure virtual function accept that is used for implementing Visitor pattern.
+	* This function will call visitors visit function.
+	* @param reference to the class that inherits the visitor abstract class
+	*/
+	void accept(Visitor& v) override;
 
 
 	/*
@@ -282,7 +298,7 @@ private:
 
 	/*
 	* Simplification stack used for resource allocation
-	* It constains register variables
+	* It constains register variable pointers
 	*/
 	SimplificationStack ss;
 
