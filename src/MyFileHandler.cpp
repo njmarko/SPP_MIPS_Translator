@@ -11,7 +11,16 @@ MyFileHandler::MyFileHandler()
 
 MyFileHandler::MyFileHandler(std::string folder_path)
 {
+	inFolderPath = folder_path;
 	get_filenames(folder_path);
+	createProgramFromFilenames();
+}
+
+MyFileHandler::MyFileHandler(int argc, char * argv[])
+{
+	checkCommandlineArgs(argc, argv);
+	inFolderPath = inFolderPath;
+	get_filenames(inFolderPath);
 	createProgramFromFilenames();
 }
 
@@ -48,4 +57,26 @@ std::string MyFileHandler::createProgramFromFilenames()
 std::string MyFileHandler::getCodeFromFilename()
 {
 	return codeFromFilenames;
+}
+
+void MyFileHandler::checkCommandlineArgs(int argc, char * argv[])
+{
+	//char* inFilename;
+	//char* outFilename;
+	//char* inFolderPath; // used for reading the code from the filenames
+
+	if (argc < 3 || argc > 4) {
+		throw std::runtime_error("Wrong number of input arguments!SuportedFormats: [inFilename] [outFilename] {this one is optional}[inFolderPath]\n");
+	}
+	inFilePath = argv[1];
+	outFilePath = argv[2];
+	if (argc == 4)
+	{
+		inFolderPath = argv[3];
+	}
+}
+
+std::string MyFileHandler::getInFilepath()
+{
+	return inFilePath;
 }

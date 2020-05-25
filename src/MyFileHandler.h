@@ -39,6 +39,14 @@ public:
 	MyFileHandler(std::string folder_path);
 
 	/*
+	* Constructor that also checks the command line arguments
+	* @param number of arguments 
+	* @param value of the arguments
+	* @throws runtime_error if the number of arguments is incorrect
+	*/
+	MyFileHandler(int argc, char* argv[]);
+
+	/*
 	* Function that reads the filenames in the folder path and adds them to the vector of strings
 	* Solution found at: http://www.cplusplus.com/forum/windows/189681/
 	* @param path name
@@ -58,6 +66,20 @@ public:
 	* @returns string with all the loaded code
 	*/
 	std::string getCodeFromFilename();
+
+	/*
+	* Checks if there are 3 or 4 command line arguments
+	* @param number of arguments 
+	* @param value of the arguments
+	* @throws runtime_error if the number of arguments is incorrect
+	*/
+	void checkCommandlineArgs(int argc, char* argv[]);
+
+	/*
+	* Getter for the inFilepath (first argument of the program)
+	*/
+	std::string getInFilepath();
+
 private:
 
 	/*
@@ -75,4 +97,18 @@ private:
 	*/
 	std::string codeFromFilenames;
 
+	/*
+	* String path to the folder where the files with code in their name is located
+	*/
+	std::string inFolderPath;
+
+	/*
+	* String path to the file where the MIPS .s code will be saved
+	*/
+	std::string outFilePath;
+
+	/*
+	* String path to the flie where the MAVN code is located
+	*/
+	std::string inFilePath;
 };

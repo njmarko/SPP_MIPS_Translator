@@ -12,33 +12,41 @@
 using namespace std;
 
 
-int main()
+int main(int argc, char* argv[])
 {
-
 	try
 	{
 
-		std::string fileName = ".\\..\\examples\\simple.mavn";
+		MyFileHandler fileHandler(argc,argv);
+
 		bool retVal = false;
 
 		LexicalAnalysis lex;
 		SymbolTable symTab;
 		LivenessAnalysis livenessAnalysis;
 		ResourceAllocation resourceAllocation;
-		MyFileHandler fileHandler(".\\..\\examples\\zerobytes\\");
-		
 
-		//if (!lex.readInputFile(fileName))
-		//	throw runtime_error("\nException! Failed to open input file!\n");
-		if (!lex.readInputFileName(fileHandler.createProgramFromFilenames()))
-			throw runtime_error("\nException! Failed to open input file!\n");
+		
+		if (argc == 3)
+		{
+			if (!lex.readInputFile(fileHandler.getInFilepath()))
+				throw runtime_error("\nException! Failed to open input file!\n");
+		}
+		else if (argc == 4) {
+			if (!lex.readInputFile(fileHandler.getInFilepath())) {
+				if (!lex.readInputFileName(fileHandler.createProgramFromFilenames()))
+					throw runtime_error("\nException! Failed to open input file or folder!\n");
+			}
+		}
+
+
 		lex.initialize();
 
 		retVal = lex.Do();
 
 		if (retVal)
 		{
-			cout << "Lexical analysis finished successfully!" << endl;
+			std::cout << "Lexical analysis finished successfully!" << endl;
 			lex.printTokens();
 		}
 		else
@@ -48,38 +56,38 @@ int main()
 		}
 
 		SyntaxAnalysis syn(lex,symTab);
-		cout << "\nPerforming syntax analysis..." << endl;
+		std::cout << "\nPerforming syntax analysis..." << endl;
 		retVal = syn.Do();
 
 		if (retVal)
 		{
-			cout << "Syntax analysis finished successfully!" << endl;
+			std::cout << "Syntax analysis finished successfully!" << endl;
 		}
 		else
 		{
 			throw runtime_error("\nException! Syntax analysis failed!\n");
 		}
 
-		cout << "\nConnecting the instructions..." << endl;
+		std::cout << "\nConnecting the instructions..." << endl;
 		symTab.connectInstructions();
-		cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
+		std::cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
 		symTab.printInstructions();
 
-		cout << "\nDoing Liveness analysis..." << endl;
+		std::cout << "\nDoing Liveness analysis..." << endl;
 		symTab.accept(livenessAnalysis);
-		cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
+		std::cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
 		symTab.printInstructions();
 
-		cout << "\nDoing Resource allocation..." << endl;
+		std::cout << "\nDoing Resource allocation..." << endl;
 		symTab.accept(resourceAllocation);
-		cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
+		std::cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
 		symTab.printInstructions();
 		symTab.getInterferenceGraph().printIGMatrix();
 
 	}
 	catch (runtime_error e)
 	{
-		cout << e.what() << endl;
+		std::cout << e.what() << endl;
 		return 1;
 	}
 

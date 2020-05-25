@@ -59,11 +59,20 @@ bool LexicalAnalysis::readInputFile(string fileName)
 
 bool LexicalAnalysis::readInputFileName(std::string filename)
 {
+	programBuffer.clear();
 	for each (char var in filename)
 	{
 		programBuffer.push_back(var);
 	}
-	return true;
+	if (programBuffer.size() > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 
