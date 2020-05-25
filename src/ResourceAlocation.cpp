@@ -4,6 +4,7 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 {
 	buildInterferenceGraph(symTab.getInterferenceGraph(), symTab.getInstructions(), symTab.getRegVariables());
 	performSimplification(symTab.getInterferenceGraph(), symTab.getSimplificationStack(), symTab.getRegVariables());
+	selectRegisters(symTab.getInterferenceGraph(), symTab.getSimplificationStack());
 }
 
 InterferenceGraph & ResourceAllocation::buildInterferenceGraph(InterferenceGraph& ig, Instructions & instr, Variables& vars)
@@ -84,4 +85,48 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 		varRang.erase(highestRank);
 	}
 	return sims;
+}
+
+void ResourceAllocation::selectRegisters(InterferenceGraph & ig, SimplificationStack & ss)
+{
+
+	std::set<Regs> allocated_regs;
+
+
+	while (!ss.empty()) { //dok ne prodjem kroz sve variable
+		Variable* v = ss.top();
+		ss.pop();
+		int color = -1;
+		allocated_regs.clear();
+		for (Variables::const_iterator cit = ig.getVars()->cbegin(); cit != ig.getVars()->cend(); ++cit) {
+			int pos = (*cit)->getPos();
+			if (ig.getIGMatrix()[v->getPos()][pos] == __INTERFERENCE__ && (*cit)->getAsignment() != Regs(0)) { //ako postoji smetnja za tu varijablu
+				allocated_regs.emplace((*cit)->getAsignment());
+			}
+		}
+		bool taken = false;
+		for (int i = 0; i < __REG_NUMBER__; i++)
+		{
+			taken = false;
+			for each (Regs var in allocated_regs)
+			{
+				if (Regs(i+1) == var) {
+					taken = true;
+					break;
+				}
+			}
+			if (!taken) {
+				color = i+1;
+				break;
+			}
+		}
+		if (color == -1) {
+			// if non of the standard available registers can be assigned
+			throw std::runtime_error("Spill happened while performing register allocations!");
+		}
+		else
+		{
+			v->set_assignment(Regs(color));
+		}
+	}
 }

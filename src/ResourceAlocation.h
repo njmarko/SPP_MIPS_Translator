@@ -2,6 +2,7 @@
 #include "SymbolTable.h"
 #include "IR.h"
 #include <map>
+#include <set>
 
 /*
 * Class that will do the resource allocation
@@ -29,10 +30,18 @@ class ResourceAllocation :public Visitor {
 	/*
 	* Second phase of ResourceAllocation: Function that builds the simplification stack
 	* @param reference to the interference graph
-	* @param reference to the list of instruction pointers
+	* @param reference to the simplification stack that contains Variable pointers
 	* @param reference to the list of register variable pointers
 	* @returns reference to the updated interference graph
 	* @throws runtime_error if the spill happens because the simplification stack could not be filled
 	*/
 	SimplificationStack& performSimplification(InterferenceGraph& ig,SimplificationStack& sims, Variables& vars);
+
+	/*
+	* Last phase of ResourceAllocation: Function that selects the registers for the variables
+	* @param reference to the interference graph
+	* @param reference to the simplification stack that contains Variable pointers
+	* @throws runtime_error if the spill happens because there were not enough register left to assign
+	*/
+	void selectRegisters(InterferenceGraph& ig, SimplificationStack& ss);
 };
