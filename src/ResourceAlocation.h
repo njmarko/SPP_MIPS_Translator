@@ -32,6 +32,21 @@ class ResourceAllocation :public Visitor {
 	*/
 	void handleSpill(Instructions& instr, Variables& r_vars, Variables& m_vars, Labels& labels, InterferenceGraph& ig);
 
+	/*
+	* Helper function for the handleSpill function
+	* First it chooses a nemae for the var that is free, then It creates a new memory variable.
+	* @param reference to the list of memory variable pointers
+	* @returns pointer to the new memory variable
+	*/
+	Variable* createNewMemVariable(Variables& m_vars);
+
+	/*
+	* Helper function for the handleSpill function
+	* First it chooses a nemae for the var that is free, then It creates a new reg variable.
+	* @param reference to the list of register variable pointers
+	* @returns pointer to the new register variable
+	*/
+	Variable* createNewRegVariable(Variables& r_vars);
 
 	/*
 	* Function that creates a map for the register interferences from the interference matrix

@@ -385,6 +385,28 @@ std::string Instruction::getParentLabel()
 	return parent_label;
 }
 
+bool Instruction::checkVarInDef(Variable & v)
+{
+	for each (Variable* var in m_def)
+	{
+		if (var->getName() == v.getName()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Instruction::checkVarInUse(Variable & v)
+{
+	for each (Variable* var in m_use)
+	{
+		if (var->getName() == v.getName()) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 
 std::string varTypeToStr(Variable::VariableType type)

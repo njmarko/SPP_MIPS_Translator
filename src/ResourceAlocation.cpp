@@ -1,4 +1,4 @@
-#include "ResourceAlocation.h"
+﻿#include "ResourceAlocation.h"
 
 void ResourceAllocation::visit(SymbolTable & symTab)
 {
@@ -30,6 +30,74 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		}
 	}
 	// A new memory variable is needed for storing the spilled data
+
+	Variable* mem_var = createNewMemVariable(m_vars);
+	Variables memList; // I make the variables list here because the instruction constructor uses it
+	memList.push_back(mem_var);
+
+	/*
+	* Before every instruction that uses the selected regVar, we need to add 2 instructions intended
+	* for loading the instruction from memory to the selected register variable.
+	* Also for every instruction that defines the selected register variable, we need to 
+	* add an instruction after it that stores the selected variable;
+	*
+	* Another possible heuristic would be to find the regVar that is used the least in the program
+	*
+	* It would be good if we could chose a regVar that is not inside a loop
+	*/
+
+
+	for (Instructions::const_iterator cit = instr.cbegin(); cit != instr.cend();++cit) {
+		// first check for usage of the selected regVar
+		if ((*cit)->checkVarInUse(*replacedVar))
+		{
+			// if the regVar is used, then the regvar has to be loaded from the memory
+
+			/*
+			* real position will be calculated after all the instructions are added
+			* type of instruction is load address E → la rid, mid
+			* destination is a new registerVariable (we assume there are infinite ammount of them)
+			* source is the memory variable that replaces the regVar (it was previously created)
+			* parent label is the same lable where the encountered instruction belongs
+			*/
+
+			Variables dstList;
+			Variable* r1 = createNewRegVariable(r_vars);
+			dstList.push_back(r1);
+			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList,(*cit)->getParentLabel());
+			instr.insert(cit, la); // inserts the new instruction before the chosen instruction pointed by the iterator
+
+			/*
+			* real position will be calculated after all the instructions are added
+			* type of instruction is load word E → lw rid, num(rid)
+			* destination is a the register that was selected to be spilled into memory
+			* source is the register that holds the address that was loaded previously with "la" instruction
+			* parent label is the same lable where the encountered instruction belongs
+			* num is the value before the parenthesis in the "lw" instruction
+			*/
+
+			Variables srcList;
+			srcList.push_back(r1);
+			dstList.push_back(replacedVar);
+			Instruction* lw = new Instruction((*cit)->getPos(), InstructionType::I_LW, dstList, srcList, (*cit)->getParentLabel(),0);
+			instr.insert(cit, lw); // inserts the new instruction before the chosen instruction pointed by the iterator
+		}
+
+
+		// second check for definitions of the selected regVar
+		if ((*cit)->checkVarInDef(*replacedVar))
+		{
+			// if the regVar is defined, then the result has to be stored in memory
+		}
+	}
+
+	m_vars.push_back(mem_var);
+
+
+}
+
+Variable * ResourceAllocation::createNewMemVariable(Variables& m_vars)
+{
 	std::string memVarName = "m1";
 	// First we find an original name for the variable
 	int number = 1;
@@ -49,22 +117,31 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			break;
 		}
 	}
-	m_vars.push_back(new Variable(memVarName,-1,Variable::MEM_VAR,0));
-	/*
-	* Before every instruction that uses the selected regVar, we need to add 2 instructions intended
-	* for loading the instruction from memory to the selected register variable.
-	* Also for every instruction that defines the selected register variable, we need to 
-	* add an instruction after it that stores the selected variable;
-	*/
+	return new Variable(memVarName, -1, Variable::MEM_VAR, 0);
+}
 
-
-	for (Instructions::const_iterator cit = instr.cbegin(); cit != instr.cend();++cit) {
-		// first check for definitions of the selected regVar
-
+Variable * ResourceAllocation::createNewRegVariable(Variables& r_vars)
+{
+	std::string memVarName = "r1";
+	// First we find an original name for the variable
+	int number = 1;
+	bool repeat = false;
+	while (true)
+	{
+		for each (Variable* var in r_vars)
+		{
+			if (var->getName() == memVarName)
+			{
+				repeat = true;
+				memVarName = "r" + (++number);
+				break;
+			}
+		}
+		if (!repeat) {
+			break;
+		}
 	}
-
-
-
+	return new Variable(memVarName, -1, Variable::MEM_VAR, 0);
 }
 
 std::map<Variable*, int> ResourceAllocation::makeVarInterferenceMap(InterferenceGraph & ig, Variables & r_vars)
@@ -107,7 +184,6 @@ InterferenceGraph & ResourceAllocation::buildInterferenceGraph(InterferenceGraph
 				}
 			}
 		}
-		
 	}
 	return ig;
 }
