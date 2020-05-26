@@ -331,7 +331,8 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		{
 			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
 		}
-		dst.push_back(v);
+		// first argument for this instruction is not the destination register but rather register that is used
+		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, *(++cit_params), getParentLabel());
 		ins->fillUseVariables();

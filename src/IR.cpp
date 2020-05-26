@@ -349,7 +349,7 @@ std::string Instruction::convertToMIPSString()
 	case I_BLTZ: // E → bltz rid, id
 		ss << "\tbltz\t";
 		first = true;
-		for each (Variable* var in m_dst)
+		for each (Variable* var in m_src)
 		{
 			if (first)
 			{
