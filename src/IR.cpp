@@ -211,12 +211,37 @@ void Instruction::fillUseVariables()
 
 std::string Instruction::convertToMIPSString()
 {
+	// TODO: Group the output cases together and just type the name of the instruction based on type
+	// TODO: Add instruction type to string method to support the request above
+
 	std::stringstream ss; // string stream used to build MIPS instructions
 	bool first;
 	switch (m_type)
 	{
 	case I_NO_TYPE:
 		break;
+	case I_MUL:
+		ss << "\tmul\t";
+		first = true;
+		for each (Variable* var in m_dst)
+		{
+			if (first)
+			{
+				ss << "$t" << var->getAsignment() - 1;
+				first = false;
+			}
+			else
+			{
+				ss << ", $t" << var->getAsignment() - 1;
+			}
+
+		}
+		for each (Variable* var in m_src)
+		{
+			ss << ", $t" << var->getAsignment() - 1;
+		}
+		break;
+
 	case I_ADD: // E → add rid, rid, rids
 		ss << "\tadd\t";
 		first = true;

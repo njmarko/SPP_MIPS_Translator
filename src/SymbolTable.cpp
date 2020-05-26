@@ -218,6 +218,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	int offsetNum;
 	switch (i_type)
 	{
+	case I_MUL: // E → mul rid, rid, rid
 	case I_SUB: // E → sub rid, rid, rid
 	case I_ADD: // E → add rid, rid, rid
 		if ((v=isRegVarDefined(*cit_params))==nullptr)

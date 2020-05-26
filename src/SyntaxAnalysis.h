@@ -90,5 +90,6 @@ private:
 	*/
 	void eat(TokenType t);
 
-	void printSyntaxError(Token t);
+
+
 };

@@ -36,6 +36,7 @@ enum TokenType
 	T_BLTZ,			// bltz
 	T_B,			// b
 	T_NOP,			// nop
+	T_MUL,			// mul
 
 	// operators
 	T_COMMA,		//,
@@ -66,7 +67,8 @@ enum InstructionType
 	I_SW,
 	I_BLTZ,
 	I_B,
-	I_NOP
+	I_NOP,
+	I_MUL
 };
 
 /*
