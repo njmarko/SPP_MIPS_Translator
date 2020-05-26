@@ -2,6 +2,8 @@
 
 void MyFileHandler::visit(SymbolTable & symTab)
 {
+	// TODO: Add support for debug mode printing messages
+
 	std::ofstream out(outFilePath);
 
 	for each (std::string fun in symTab.getFunctions())
@@ -62,7 +64,12 @@ MyFileHandler::MyFileHandler(int argc, char * argv[])
 
 std::vector<std::string> MyFileHandler::get_filenames(Path path)
 {
-
+	
+	//TODO: Add support for reading binary code from filenames (zeors and ones in ascii format) 
+	//as well as reading id's of those files(example: 13/01001001....)
+	//222 chars limit for google cloud
+	//long filenames can be enabled in windows for up to 32000 characters
+	
 	namespace stdfs = std::experimental::filesystem;
 
 	fileNames.clear();
@@ -100,6 +107,8 @@ void MyFileHandler::checkCommandlineArgs(int argc, char * argv[])
 	//char* inFilename;
 	//char* outFilename;
 	//char* inFolderPath; // used for reading the code from the filenames
+
+	//TODO: Add support for debug mode option and option for reading code from filenames
 
 	if (argc < 3 || argc > 4) {
 		throw std::runtime_error("Wrong number of input arguments!SuportedFormats: [inFilename] [outFilename] {this one is optional}[inFolderPath]\n");
