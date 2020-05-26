@@ -34,6 +34,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	Variable* mem_var = createNewMemVariable(m_vars);
 	Variables memList; // I make the variables list here because the instruction constructor uses it
 	memList.push_back(mem_var);
+	m_vars.push_back(mem_var); // added to the list of all mem variables used in the code that is in symTable
 
 	/*
 	* Before every instruction that uses the selected regVar, we need to add 2 instructions intended
@@ -63,6 +64,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 
 			Variables dstList;
 			Variable* r1 = createNewRegVariable(r_vars);
+			r_vars.push_back(r1); // added to the list of all reg variables used in the code that is in symTable
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList,(*cit)->getParentLabel());
 			instr.insert(cit, la); // inserts the new instruction before the chosen instruction pointed by the iterator
@@ -76,6 +78,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			* num is the value before the parenthesis in the "lw" instruction
 			*/
 
+			dstList.clear(); // could be done with less code by renaming and reusing the Variables, but code clarity is more important here
 			Variables srcList;
 			srcList.push_back(r1);
 			dstList.push_back(replacedVar);
@@ -88,10 +91,47 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		if ((*cit)->checkVarInDef(*replacedVar))
 		{
 			// if the regVar is defined, then the result has to be stored in memory
+
+			// these instructions should be added after the current instruction that defines the selected regVar
+			Instructions::const_iterator after(cit);
+			++after;
+
+			/*
+			* real position will be calculated after all the instructions are added
+			* type of instruction is load address E → la rid, mid
+			* destination is a new registerVariable (we assume there are infinite ammount of them)
+			* source is the memory variable that replaces the regVar (it was previously created)
+			* parent label is the same lable where the encountered instruction belongs
+			*/
+
+			Variables dstList;
+			Variable* r1 = createNewRegVariable(r_vars);
+			r_vars.push_back(r1);  // added to the list of all reg variables used in the code that is in symTable
+			dstList.push_back(r1);
+			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList, (*cit)->getParentLabel());
+			instr.insert(after, la); // inserts the new instruction before the next pointed by the after iterator
+
+			/*
+			* real position will be calculated after all the instructions are added
+			* type of instruction is load word E → sw rid, num(rid)
+			* destination is a the register that holds the address of the new memory variable
+			* source is the register that holds the address that was loaded previously with "la" instruction
+			* parent label is the same lable where the encountered instruction belongs
+			* num is the value before the parenthesis in the "lw" instruction
+			*/
+
+			dstList.clear(); // could be done with less code by renaming and reusing the Variables, but code clarity is more important here
+			Variables srcList;
+			srcList.push_back(r1);
+			dstList.push_back(replacedVar);
+			// In sw instruction, source register is on the left, and destination register that holds the memory address is on the right!
+			Instruction* sw = new Instruction((*cit)->getPos(), InstructionType::I_SW, srcList, dstList, (*cit)->getParentLabel(), 0); // in sw src and dst change places
+			instr.insert(after, sw); // inserts the new instruction before the next pointed by the after iterator
+
 		}
 	}
 
-	m_vars.push_back(mem_var);
+
 
 
 }
