@@ -345,6 +345,12 @@ public:
 	*/
 	bool checkVarInUse(Variable& v);
 
+	/*
+	* Setter for the instruction position 
+	* @param position number
+	*/
+	void setPosition(int pos);
+
 private:
 	/*
 	* Position of the Instruction

@@ -129,6 +129,35 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			instr.insert(after, sw); // inserts the new instruction before the next pointed by the after iterator
 
 		}
+
+		/*
+		* Next step is to go trough all the instructions and choose the new position numbers for them.
+		* At the same time update the list of labels, so the labels now point to the correct first instruction
+		* that belongs to them
+		*/
+
+		int pos_num = 0; // i start counting instructions from 0
+		std::string current_label = ""; // used to keep track if the instruction in the iteration belongs to a different label
+		for each (Instruction* var in instr)
+		{
+			var->setPosition(pos_num);
+			if (var->getParentLabel() != current_label)
+			{
+				current_label = var->getParentLabel();
+				// labels only keep track of the position of its first variable, so we assign that value on labelName change
+				for each (std::pair<std::string,int> p in labels)
+				{
+					if (p.first == current_label) {
+						p.second = pos_num;
+					}
+				}
+			}
+			++pos_num;
+		}
+
+		/*
+		* Reset of some data is needed because liveness analysis and register allocation has to be performed again.
+		*/
 	}
 
 

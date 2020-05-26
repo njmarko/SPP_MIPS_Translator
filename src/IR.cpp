@@ -407,6 +407,11 @@ bool Instruction::checkVarInUse(Variable & v)
 	return false;
 }
 
+void Instruction::setPosition(int pos)
+{
+	m_position = pos;
+}
+
 
 
 std::string varTypeToStr(Variable::VariableType type)
