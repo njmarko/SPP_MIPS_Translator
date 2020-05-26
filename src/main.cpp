@@ -68,25 +68,36 @@ int main(int argc, char* argv[])
 			throw runtime_error("\nException! Syntax analysis failed!\n");
 		}
 
-		std::cout << "\nConnecting the instructions..." << endl;
-		symTab.connectInstructions();
-		std::cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
-		symTab.printInstructions();
+		while (true) {
+			std::cout << "\nConnecting the instructions..." << endl;
+			symTab.connectInstructions();
+			std::cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
+			symTab.printInstructions();
 
-		std::cout << "\nDoing Liveness analysis..." << endl;
-		symTab.accept(livenessAnalysis);
-		std::cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
-		symTab.printInstructions();
+			std::cout << "\nDoing Liveness analysis..." << endl;
+			symTab.accept(livenessAnalysis);
+			std::cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
+			symTab.printInstructions();
 
-		std::cout << "\nDoing Resource allocation..." << endl;
-		symTab.accept(resourceAllocation);
-		std::cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
-		symTab.printInstructions();
-		symTab.getInterferenceGraph().printIGMatrix();
-
+			try
+			{
+				std::cout << "\nDoing Resource allocation..." << endl;
+				symTab.accept(resourceAllocation);
+				std::cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
+				symTab.printInstructions();
+				symTab.getInterferenceGraph().printIGMatrix();
+				break; // if no spills happen
+			}
+			catch (runtime_error e)
+			{
+				std::cout << e.what() << endl;
+				continue;
+			}
+		}
 		std::cout << "\nCreating MIPS output file..." << endl;
 		symTab.accept(fileHandler);
 		std::cout << "\nOutput file with the MIPS code successfully created!" << endl;
+
 	}
 	catch (runtime_error e)
 	{

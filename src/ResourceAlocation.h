@@ -3,6 +3,7 @@
 #include "IR.h"
 #include <map>
 #include <set>
+#include <string>
 
 /*
 * Class that will do the resource allocation

@@ -68,8 +68,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			r_vars.push_back(r1); // added to the list of all reg variables used in the code that is in symTable
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList,(*cit)->getParentLabel());
-			la->fillDefVariables();
-			la->fillUseVariables();
+			la->fillDefVariables(); // la instruction only fills the def set
 			instr.insert(cit, la); // inserts the new instruction before the chosen instruction pointed by the iterator
 
 			/*
@@ -114,8 +113,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			r_vars.push_back(r1);  // added to the list of all reg variables used in the code that is in symTable
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList, (*cit)->getParentLabel());
-			la->fillDefVariables();
-			la->fillUseVariables();
+			la->fillDefVariables(); // la instruction only fills the def set
 			instr.insert(after, la); // inserts the new instruction before the next pointed by the after iterator
 
 			/*
@@ -129,13 +127,16 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 
 			dstList.clear(); // could be done with less code by renaming and reusing the Variables, but code clarity is more important here
 			Variables srcList;
+			srcList.push_back(replacedVar);
 			srcList.push_back(r1);
-			dstList.push_back(replacedVar);
-			// In sw instruction, source register is on the left, and destination register that holds the memory address is on the right!
-			Instruction* sw = new Instruction((*cit)->getPos(), InstructionType::I_SW, srcList, dstList, (*cit)->getParentLabel(), 0); // in sw src and dst change places
+			// In sw instruction, source register is on the left, another source register is on the right! Right reg just holds the address to the real memory destination
+			Instruction* sw = new Instruction((*cit)->getPos(), InstructionType::I_SW, dstList, srcList, (*cit)->getParentLabel(), 0); // in sw src and dst change places
 			sw->fillUseVariables(); // sw only has use variables, because the first and second registers are just used
 			instr.insert(after, sw); // inserts the new instruction before the next pointed by the after iterator
 
+			// because the 2 instructions are added after the current instruction iterator it has to be incremented 2 times
+			++cit;
+			++cit;
 		}
 	}
 	/*
@@ -180,12 +181,13 @@ Variable * ResourceAllocation::createNewMemVariable(Variables& m_vars)
 	bool repeat = false;
 	while (true)
 	{
+		repeat = false;
 		for each (Variable* var in m_vars)
 		{
 			if (var->getName() == memVarName)
 			{
 				repeat = true;
-				memVarName = "m" + (++number);
+				memVarName = "m" + std::to_string(++number);
 				break;
 			}
 		}
@@ -193,7 +195,7 @@ Variable * ResourceAllocation::createNewMemVariable(Variables& m_vars)
 			break;
 		}
 	}
-	return new Variable(memVarName, -1, Variable::MEM_VAR, 0);
+	return new Variable(memVarName, -1, Variable::MEM_VAR, "0"); // take string as a value;
 }
 
 Variable * ResourceAllocation::createNewRegVariable(Variables& r_vars)
@@ -204,12 +206,13 @@ Variable * ResourceAllocation::createNewRegVariable(Variables& r_vars)
 	bool repeat = false;
 	while (true)
 	{
+		repeat = false;
 		for each (Variable* var in r_vars)
 		{
 			if (var->getName() == memVarName)
 			{
 				repeat = true;
-				memVarName = "r" + (++number);
+				memVarName = "r" + std::to_string(++number);
 				break;
 			}
 		}
@@ -217,7 +220,7 @@ Variable * ResourceAllocation::createNewRegVariable(Variables& r_vars)
 			break;
 		}
 	}
-	return new Variable(memVarName, number, Variable::MEM_VAR, 0);
+	return new Variable(memVarName, number-1, Variable::REG_VAR);
 }
 
 std::map<Variable*, int> ResourceAllocation::makeVarInterferenceMap(InterferenceGraph & ig, Variables & r_vars)
