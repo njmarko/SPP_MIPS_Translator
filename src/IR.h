@@ -333,6 +333,18 @@ public:
 	*/
 	std::string getParentLabel();
 
+	/*
+	* Checks if the variable is in the Define set
+	* @param reference to the variable which existance in Def will be checked
+	*/
+	bool checkVarInDef(Variable& v);
+
+	/*
+	* Checks if the variable is in the Use set
+	* @param reference to the variable which existance in Use will be checked
+	*/
+	bool checkVarInUse(Variable& v);
+
 private:
 	/*
 	* Position of the Instruction

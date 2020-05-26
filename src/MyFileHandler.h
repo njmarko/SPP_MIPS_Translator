@@ -23,15 +23,9 @@ public:
 	/*
 	* Visitor class has pure virtual function visit that has to be implemented.
 	* Function visit is called by the class that this Visitor visits
-	* Here it is used for writing the code into file
+	* Here it is used for writing the MIPS code into file
 	*/
 	void visit(SymbolTable& symTab)override;
-
-
-	/*
-	* Creates the mips file based on the data gathered in the Symbol table
-	*/
-	void MakeMIPSFile();
 
 	/*
 	* Default constructor

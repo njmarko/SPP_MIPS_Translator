@@ -18,6 +18,31 @@ class ResourceAllocation :public Visitor {
 	*/
 	void visit(SymbolTable& symTab)override;
 
+
+	/*
+	* Funcion that is activated when the spill happens. 
+	* It's role is to find the register variable with the most interferences and 
+	* replace it with memory variable, and also add load instructions before every use of that variable
+	* and store instructions after every declaration of that variable.
+	* @param reference to the list of instruction pointers
+	* @param reference to the list of register variable pointers
+	* @param reference to the list of memory variable pointers
+	* @param reference to the list of pairs of label and function names, and the first instructions that follow after them
+	* @param reference to the interference graph
+	*/
+	void handleSpill(Instructions& instr, Variables& r_vars, Variables& m_vars, Labels& labels, InterferenceGraph& ig);
+
+
+	/*
+	* Function that creates a map for the register interferences from the interference matrix
+	* Each key is the variable pointer, and the associated value is the number of interferences
+	* for that variable
+	* @param reference to the insterference graph
+	* @param reference to a list of pointers of register variables
+	*/
+	std::map<Variable*, int> makeVarInterferenceMap(InterferenceGraph& ig, Variables& r_vars);
+
+
 	/*
 	* First phase of ResourceAllocation: Function that builds an interference graph from the given instructions
 	* @param reference to the interference graph

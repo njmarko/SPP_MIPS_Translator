@@ -2,9 +2,92 @@
 
 void ResourceAllocation::visit(SymbolTable & symTab)
 {
-	buildInterferenceGraph(symTab.getInterferenceGraph(), symTab.getInstructions(), symTab.getRegVariables());
-	performSimplification(symTab.getInterferenceGraph(), symTab.getSimplificationStack(), symTab.getRegVariables());
-	selectRegisters(symTab.getInterferenceGraph(), symTab.getSimplificationStack());
+	try
+	{
+		buildInterferenceGraph(symTab.getInterferenceGraph(), symTab.getInstructions(), symTab.getRegVariables());
+		performSimplification(symTab.getInterferenceGraph(), symTab.getSimplificationStack(), symTab.getRegVariables());
+		selectRegisters(symTab.getInterferenceGraph(), symTab.getSimplificationStack());
+	}
+	catch (const std::runtime_error e) // if the spill happens
+	{
+		std::cout << e.what();
+		handleSpill(symTab.getInstructions(),symTab.getRegVariables(),symTab.getMemVariables(),symTab.getLabels(),symTab.getInterferenceGraph());
+		// throws the error so another iteration of  the algorithm is performed starting from liveness analysis
+		throw std::runtime_error("Handling of the spilling was performed."); 
+	}
+}
+
+void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig)
+{
+	// First the register variable with the most interferences is picked
+	std::map <Variable*, int> varRang = makeVarInterferenceMap(ig,r_vars);
+	Variable* replacedVar = nullptr;
+	for each (std::pair<Variable*,int> p in varRang)
+	{
+		if (replacedVar == nullptr || p.second >varRang[replacedVar])
+		{
+			replacedVar = p.first;
+		}
+	}
+	// A new memory variable is needed for storing the spilled data
+	std::string memVarName = "m1";
+	// First we find an original name for the variable
+	int number = 1;
+	bool repeat = false;
+	while (true)
+	{
+		for each (Variable* var in m_vars)
+		{
+			if (var->getName() == memVarName)
+			{
+				repeat = true;
+				memVarName = "m" + (++number);
+				break;
+			}
+		}
+		if (!repeat) {
+			break;
+		}
+	}
+	m_vars.push_back(new Variable(memVarName,-1,Variable::MEM_VAR,0));
+	/*
+	* Before every instruction that uses the selected regVar, we need to add 2 instructions intended
+	* for loading the instruction from memory to the selected register variable.
+	* Also for every instruction that defines the selected register variable, we need to 
+	* add an instruction after it that stores the selected variable;
+	*/
+
+
+	for (Instructions::const_iterator cit = instr.cbegin(); cit != instr.cend();++cit) {
+		// first check for definitions of the selected regVar
+
+	}
+
+
+
+}
+
+std::map<Variable*, int> ResourceAllocation::makeVarInterferenceMap(InterferenceGraph & ig, Variables & r_vars)
+{
+	/*
+	* First the rank is calculated for all the variables, and is stored in a map
+	*/
+	std::map <Variable*, int> varRang;
+	int interferenceCount = 0;
+	for each (Variable* var in r_vars)
+	{
+		interferenceCount = 0;
+		for (size_t i = 0; i < ig.getIGMatrix().size(); i++)
+		{
+			// Interference matrix is simetric around the main diagonal so it doesn't matter how it is traversed
+			if (ig.getIGMatrix()[i][var->getPos()] == __INTERFERENCE__)
+			{
+				++interferenceCount;
+			}
+		}
+		varRang[var] = interferenceCount;
+	}
+	return varRang;
 }
 
 InterferenceGraph & ResourceAllocation::buildInterferenceGraph(InterferenceGraph& ig, Instructions & instr, Variables& vars)
@@ -34,21 +117,7 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 	/*
 	* First the rank is calculated for all the variables, and is stored in a map
 	*/
-	std::map <Variable*, int> varRang;
-	int interferenceCount = 0;
-	for each (Variable* var in vars)
-	{
-		interferenceCount = 0;
-		for (size_t i = 0; i < ig.getIGMatrix().size(); i++)
-		{
-			// Interference matrix is simetric around the main diagonal so it doesn't matter how it is traversed
-			if (ig.getIGMatrix()[i][var->getPos()] == __INTERFERENCE__)
-			{
-				++interferenceCount;
-			}
-		}
-		varRang[var] = interferenceCount;
-	}
+	std::map <Variable*, int> varRang = makeVarInterferenceMap(ig,vars);
 
 	// Repeat untill the stack is filled or runtime_error is thrown
 	while (sims.size() < vars.size()) {
