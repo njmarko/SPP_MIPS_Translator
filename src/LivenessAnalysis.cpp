@@ -43,7 +43,7 @@ void LivenessAnalysis::doLivenessAnalysis(Instructions & instr)
 			(*ri)->getIn().sort();
 			// get rid of duplicates
 			(*ri)->getIn().unique();
-			//check if there have been changes to the in and out sets
+			// check if there have been changes to the in and out sets
 			if (in != (*ri)->getIn() || out != (*ri)->getOut())
 			{
 				difference = true;

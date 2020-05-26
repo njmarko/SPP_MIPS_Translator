@@ -260,7 +260,6 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		ins->fillDefVariables();
 		break;
 	case I_LW: // E → lw rid, num(rid)
-	case I_SW: // E → sw rid, num(rid)
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
 			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
@@ -274,8 +273,29 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		}
 		src.push_back(v);
 		// Increments the instruction counter whenever an instruction is created
-		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),offsetNum);
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(), offsetNum);
 		ins->fillDefVariables();
+		ins->fillUseVariables();
+		break;
+	case I_SW: // E → sw rid, num(rid)
+		// in store instruction, source is the first register and the second register is also used as a source
+		// because SW instruction doesn't use memory variable name directly, it has no "destination"
+		// instead of the destination, it uses the register that holds the address of the memory variable as a source
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
+		}
+		src.push_back(v); // adds the first register as a source
+		// it has to be a number to pass the syntax analysis, so no need to check for that
+		offsetNum = std::stoi(*(++cit_params)); // gets the number before the parenthesis
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error(makeInstructionErrorMsg(1, Variable::REG_VAR, i_type, *cit_params));
+		}
+		src.push_back(v); // also added to the list of source registers
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel(),offsetNum);
+		//ins->fillDefVariables();
 		ins->fillUseVariables();
 		break;
 	case I_BLTZ: // E → bltz rid, id

@@ -333,22 +333,13 @@ std::string Instruction::convertToMIPSString()
 		ss << "($t" << (*m_src.cbegin())->getAsignment() - 1 << ")";
 		break;
 	case I_SW: // E → sw rid, num(rid)
+		// SW instruction has 2 source registers and no destination registers
 		ss << "\tsw\t";
 		first = true;
-		for each (Variable* var in m_dst)
-		{
-			if (first)
-			{
-				ss << "$t" << var->getAsignment() - 1;
-				first = false;
-			}
-			else
-			{
-				ss << ", $t" << var->getAsignment() - 1;
-			}
-		}
+		ss << "$t" << (*(m_src.cbegin()))->getAsignment() - 1; // first source register
 		ss << ", " << getNumValue();
-		ss << "($t" << (*m_src.cbegin())->getAsignment() - 1 << ")";
+		// second source register actually holds the address of the mem variable that is the actuall destination of the instruction
+		ss << "($t" << (*(++m_src.cbegin()))->getAsignment() - 1 << ")"; 
 		break;
 	case I_BLTZ: // E → bltz rid, id
 		ss << "\tbltz\t";
