@@ -68,6 +68,28 @@ void SymbolTable::connectInstructions()
 	}
 }
 
+void SymbolTable::resetData()
+{
+	// reset in,out,succ,pred sets in the instructions
+	for each (Instruction* var in instructions)
+	{
+		var->resetInstruction();
+	}
+	// reset reg assignments from register allocation phase to regVariables
+	for each (Variable* var in regVariables)
+	{
+		var->resetVariableAssignment();
+	}
+	// resets the interference graph data
+	ig.resetIGData();
+
+	// resets the simplificationstack
+	while (!ss.empty()) {
+		ss.pop();
+	}
+}
+
+
 Instruction * SymbolTable::getInstrFromLabel(const std::string & label)
 {
 	/*

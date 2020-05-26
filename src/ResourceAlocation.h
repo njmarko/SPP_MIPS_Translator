@@ -18,7 +18,6 @@ class ResourceAllocation :public Visitor {
 	*/
 	void visit(SymbolTable& symTab)override;
 
-
 	/*
 	* Funcion that is activated when the spill happens. 
 	* It's role is to find the register variable with the most interferences and 

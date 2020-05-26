@@ -82,6 +82,14 @@ public:
 	*/
 	void connectInstructions();
 
+
+	/*
+	* Reset the instruction sets that are filled in instruction connection, liveness analysis and
+	* resource allocation phases. Also resets the Interference graph and variable assignments
+	*/
+	void resetData();
+
+
 	/*
 	* Gets the first instruction encountered after jump to the label
 	* @param name of the label
@@ -261,6 +269,7 @@ private:
 
 	/*
 	* Counter for register variables that is incremented whenever new register is added
+	* Used for assigning names to the reg variables
 	*/
 	int regVarsCount;
 

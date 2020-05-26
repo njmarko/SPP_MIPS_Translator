@@ -12,6 +12,7 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 	{
 		std::cout << e.what();
 		handleSpill(symTab.getInstructions(),symTab.getRegVariables(),symTab.getMemVariables(),symTab.getLabels(),symTab.getInterferenceGraph());
+		symTab.resetData(); // reset the data for the connect instructions,liveness analysis and resource alocation to work properly.
 		// throws the error so another iteration of  the algorithm is performed starting from liveness analysis
 		throw std::runtime_error("Handling of the spilling was performed."); 
 	}
@@ -67,6 +68,8 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			r_vars.push_back(r1); // added to the list of all reg variables used in the code that is in symTable
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList,(*cit)->getParentLabel());
+			la->fillDefVariables();
+			la->fillUseVariables();
 			instr.insert(cit, la); // inserts the new instruction before the chosen instruction pointed by the iterator
 
 			/*
@@ -83,11 +86,13 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			srcList.push_back(r1);
 			dstList.push_back(replacedVar);
 			Instruction* lw = new Instruction((*cit)->getPos(), InstructionType::I_LW, dstList, srcList, (*cit)->getParentLabel(),0);
+			lw->fillDefVariables();
+			lw->fillUseVariables();
 			instr.insert(cit, lw); // inserts the new instruction before the chosen instruction pointed by the iterator
 		}
 
 
-		// second check for definitions of the selected regVar
+		// after that check for definitions of the selected regVar
 		if ((*cit)->checkVarInDef(*replacedVar))
 		{
 			// if the regVar is defined, then the result has to be stored in memory
@@ -109,6 +114,8 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			r_vars.push_back(r1);  // added to the list of all reg variables used in the code that is in symTable
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList, (*cit)->getParentLabel());
+			la->fillDefVariables();
+			la->fillUseVariables();
 			instr.insert(after, la); // inserts the new instruction before the next pointed by the after iterator
 
 			/*
@@ -126,42 +133,42 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			dstList.push_back(replacedVar);
 			// In sw instruction, source register is on the left, and destination register that holds the memory address is on the right!
 			Instruction* sw = new Instruction((*cit)->getPos(), InstructionType::I_SW, srcList, dstList, (*cit)->getParentLabel(), 0); // in sw src and dst change places
+			sw->fillUseVariables(); // sw only has use variables, because the first and second registers are just used
 			instr.insert(after, sw); // inserts the new instruction before the next pointed by the after iterator
 
 		}
+	}
+	/*
+	* Next step is to go trough all the instructions and choose the new position numbers for them.
+	* At the same time update the list of labels, so the labels now hold the correct position of the
+	* first instruction that belongs to them
+	*/
 
-		/*
-		* Next step is to go trough all the instructions and choose the new position numbers for them.
-		* At the same time update the list of labels, so the labels now point to the correct first instruction
-		* that belongs to them
-		*/
-
-		int pos_num = 0; // i start counting instructions from 0
-		std::string current_label = ""; // used to keep track if the instruction in the iteration belongs to a different label
-		for each (Instruction* var in instr)
+	int pos_num = 0; // start counting instructions from 0
+	std::string current_label = ""; // used to keep track if the instruction in the iteration belongs to a different label
+	for each (Instruction* var in instr)
+	{
+		var->setPosition(pos_num);
+		if (var->getParentLabel() != current_label)
 		{
-			var->setPosition(pos_num);
-			if (var->getParentLabel() != current_label)
+			current_label = var->getParentLabel();
+			// labels only keep track of the position of its first variable, so we assign that value on labelName change
+			for each (std::pair<std::string, int> p in labels)
 			{
-				current_label = var->getParentLabel();
-				// labels only keep track of the position of its first variable, so we assign that value on labelName change
-				for each (std::pair<std::string,int> p in labels)
-				{
-					if (p.first == current_label) {
-						p.second = pos_num;
-					}
+				if (p.first == current_label) {
+					p.second = pos_num;
 				}
 			}
-			++pos_num;
 		}
-
-		/*
-		* Reset of some data is needed because liveness analysis and register allocation has to be performed again.
-		*/
+		++pos_num;
 	}
 
-
-
+	/*
+	* Reset of some data is needed because connecting instructions, liveness analysis and register allocation has to be performed again.
+	* This reset is done at the start of the connectInstructions function in the SymbolTable where all the data is located
+	* because this algoritham jumps back to connectInstructions after the spill happens
+	* connecting the instructions could have been performed here also, and then the algorithm would continue at liveness analysis phase
+	*/
 
 }
 
@@ -210,7 +217,7 @@ Variable * ResourceAllocation::createNewRegVariable(Variables& r_vars)
 			break;
 		}
 	}
-	return new Variable(memVarName, -1, Variable::MEM_VAR, 0);
+	return new Variable(memVarName, number, Variable::MEM_VAR, 0);
 }
 
 std::map<Variable*, int> ResourceAllocation::makeVarInterferenceMap(InterferenceGraph & ig, Variables & r_vars)

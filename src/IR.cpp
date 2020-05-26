@@ -13,6 +13,11 @@ void Variable::printFullInfo()
 	}
 }
 
+void Variable::resetVariableAssignment()
+{
+	set_assignment(Regs::no_assign);
+}
+
 std::ostream & operator<<(std::ostream & out, const Variable & v)
 {
 	return out << v.m_name;
@@ -403,6 +408,14 @@ void Instruction::setPosition(int pos)
 	m_position = pos;
 }
 
+void Instruction::resetInstruction()
+{
+	m_in.clear();
+	m_out.clear();
+	m_succ.clear();
+	m_pred.clear();
+}
+
 
 
 std::string varTypeToStr(Variable::VariableType type)
@@ -470,4 +483,10 @@ void InterferenceGraph::setMatrix(InterferenceMatrix & m)
 void InterferenceGraph::setVars(Variables * v)
 {
 	vars = v;
+}
+
+void InterferenceGraph::resetIGData()
+{ 
+	matrix.clear();
+	vars = nullptr;
 }

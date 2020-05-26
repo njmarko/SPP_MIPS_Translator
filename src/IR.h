@@ -71,6 +71,12 @@ public:
 	*/
 	void printFullInfo();
 
+
+	/*
+	* Resets the assigned register to NO ASSIGNMENT
+	*/
+	void resetVariableAssignment();
+
 	/*
 	* Setter for the name of the variable
 	* @param name of the variable
@@ -351,6 +357,13 @@ public:
 	*/
 	void setPosition(int pos);
 
+	/*
+	* Resets the following sets that need to be empty for the 
+	* connect instruction, liveness analysis na resource allocation phases:
+	* in,out,succ,pred
+	*/
+	void resetInstruction();
+
 private:
 	/*
 	* Position of the Instruction
@@ -474,8 +487,21 @@ public:
 	* @param pointer to the list of variable pointers
 	*/
 	void setVars(Variables* v);
+
+	/*
+	* Resets the interferenceMatrix and pointer to a list of variables
+	*/
+	void resetIGData();
 private:
+	/*
+	* Matrix that holds information about interferences
+	*/
 	InterferenceMatrix matrix;
+
+	/*
+	* Pointer to a list of variables in the variable pointers 
+	* that appear in the interference matrix
+	*/
 	Variables* vars;
 };
 
