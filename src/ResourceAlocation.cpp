@@ -10,7 +10,7 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 	}
 	catch (const std::runtime_error e) // if the spill happens
 	{
-		std::cout << e.what();
+		std::cout << e.what() << std::endl;
 		handleSpill(symTab.getInstructions(),symTab.getRegVariables(),symTab.getMemVariables(),symTab.getLabels(),symTab.getInterferenceGraph());
 		symTab.resetData(); // reset the data for the connect instructions,liveness analysis and resource alocation to work properly.
 		// throws the error so another iteration of  the algorithm is performed starting from liveness analysis
@@ -21,7 +21,7 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig)
 {
 	//TODO: add r1,r2,r3 can be replaced with three instrucitons
-	/* sub r1,r1,r1
+	/* xor r1,r1,r1
 	*  add r1,r1,r2
 	*  add r1,r1,r3
 	*/ 
@@ -288,16 +288,17 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 		Variable* highestRank = nullptr;
 		for each (std::pair<Variable*,int> p in varRang)
 		{
-			if (highestRank == nullptr) {
-				if (p.second < __REG_NUMBER__)
+			if (p.second < __REG_NUMBER__)
+			{
+				if (highestRank == nullptr) {
+						highestRank = p.first;
+				}
+				else if (p.second > varRang[highestRank])
 				{
 					highestRank = p.first;
 				}
 			}
-			else if (p.second > varRang[highestRank])
-			{
-				highestRank = p.first;
-			}
+
 		}
 		if (highestRank == nullptr) // if there is no suitable register that means there is a spill that needs to be adressed
 		{
@@ -306,6 +307,7 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 		// add the variable to the simplification stack
 		sims.push(highestRank);
 		// reduce the rank of all the neighbours of the variable
+		ig.printIGMatrix();
 		for each (std::pair<Variable*,int> p in varRang)
 		{
 			if (ig.getIGMatrix()[p.first->getPos()][highestRank->getPos()] == __INTERFERENCE__) {
