@@ -21,10 +21,45 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig)
 {
 	//TODO: add r1,r2,r3 can be replaced with three instrucitons
-	/* xor r1,r1,r1
-	*  add r1,r1,r2
-	*  add r1,r1,r3
-	*/ 
+	/* 
+	* xor r1,r1,r1
+	*	add r1,r1,r2
+	*	add r1,r1,r3
+	*
+	* sub r1,r2,r3 can be replaced with
+	*	xor r1,r1,r1
+	*	sub r1,r1,r3
+	*	add r1,r1,r2
+	*
+	* addi r1,r2,5 can be replaced with
+	*	xor r1,r1,r1
+	*	addi r1,r1,5
+	*	add r1,r1,r2
+	* and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
+	*	addi r1,r1,(value at the mem location)
+	*
+	* xor r1,r2,r3 can be replaced with
+	*	xor r1,r1,r1
+	*	xor r1,r1,r2
+	*	xor r1,r1,r3
+	*
+	* la r1,m1
+	* lw r2,0(r1) can be replaced if the value stored in m1 does not change ever (no sw that stores into it)
+	* and if the value stored in m1 can fit in 16 bits with the isntruction
+	*	li r2,(num value from m1)
+	*
+	/*
+
+
+	//TODO: add a structure that stores all the registers that were already spilled to memory
+
+	//TODO: add optimisation that replaces ADD r1,r2,r3 type instructions with ADDI instructions
+	/*
+	* first a procedure should be performed that replaces add r1,r2,r3 with three instructions, xor,add,add
+	* then it should be checked if the source register that is used is not the destination register that is being defined
+	* if it is not it should be checked if the register that is used is smaller than the size of immediate operand (addi instr)
+	* size of the immediate operand can be 16 bits (65535 unsigned or -32,768 to +32,767  signed)
+	*/
 
 
 	// First the register variable with the most interferences is picked
@@ -126,10 +161,10 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			/*
 			* real position will be calculated after all the instructions are added
 			* type of instruction is load word E → sw rid, num(rid)
-			* destination is a the register that holds the address of the new memory variable
-			* source is the register that holds the address that was loaded previously with "la" instruction
+			* source1 is the register that was selected to be moved into memory and was defined in the current instruction
+			* destination is a the register that holds the address of the new memory variable (it is technically a "source2" because it is in the use set)
 			* parent label is the same lable where the encountered instruction belongs
-			* num is the value before the parenthesis in the "lw" instruction
+			* num is the value before the parenthesis in the "sw" instruction
 			*/
 
 			dstList.clear(); // could be done with less code by renaming and reusing the Variables, but code clarity is more important here
@@ -259,8 +294,6 @@ InterferenceGraph & ResourceAllocation::buildInterferenceGraph(InterferenceGraph
 	ig.setMatrix(InterferenceMatrix(ig.getVars()->size(), std::vector<int>(ig.getVars()->size(), __EMPTY__)));
 	for (Instructions::const_iterator cit = instr.cbegin(); cit != instr.cend(); ++cit) {
 
-		//TODO: MOVE INSTRUCTIONS?
-
 		// Go trough the list of DEF variables
 		for (Variables::const_iterator vcit = (*cit)->getDef().cbegin(); vcit != (*cit)->getDef().end();++vcit) {
 			for (Variables::const_iterator vcit2 = (*cit)->getOut().cbegin(); vcit2 != (*cit)->getOut().cend();++vcit2) {
@@ -276,6 +309,8 @@ InterferenceGraph & ResourceAllocation::buildInterferenceGraph(InterferenceGraph
 
 SimplificationStack & ResourceAllocation::performSimplification(InterferenceGraph & ig, SimplificationStack & sims, Variables & vars)
 {
+	// TODO: Change map key from variable pointer to string so the order is always the same for the same input code
+
 	/*
 	* First the rank is calculated for all the variables, and is stored in a map
 	*/
@@ -307,7 +342,6 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 		// add the variable to the simplification stack
 		sims.push(highestRank);
 		// reduce the rank of all the neighbours of the variable
-		ig.printIGMatrix();
 		for each (std::pair<Variable*,int> p in varRang)
 		{
 			if (ig.getIGMatrix()[p.first->getPos()][highestRank->getPos()] == __INTERFERENCE__) {
