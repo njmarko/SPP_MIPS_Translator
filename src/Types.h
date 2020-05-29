@@ -37,6 +37,7 @@ enum TokenType
 	T_B,			// b
 	T_NOP,			// nop
 	T_MUL,			// mul
+	T_XOR,			// xor
 
 	// operators
 	T_COMMA,		//,
@@ -68,16 +69,24 @@ enum InstructionType
 	I_BLTZ,
 	I_B,
 	I_NOP,
-	I_MUL
+	I_MUL,
+	I_XOR,
 };
+
+/*
+* Converts enum instruction type to the string
+* that represents the whole instruction format
+* @param instruction type
+* @returns string representation of the whole instruction type
+*/
+std::string instrTypeToWholeInstrStr(InstructionType type);
 
 /*
 * Converts enum instruction type to string
 * @param instruction type
-* @returns string representation of the whole instruction type
+* @returns string with the name of the type
 */
-std::string instrTypeToStr(InstructionType type);
-
+std::string instrTypeStr(InstructionType type);
 
 /**
  * Reg names. Mips has 32 registers

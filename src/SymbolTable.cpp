@@ -48,7 +48,7 @@ void SymbolTable::connectInstructions()
 			//TODO: Change how label is checked if it is not possible to jump to the function
 			if (!isLabelDefined((*sucit)->getJumpLabel())) {
 				throw std::runtime_error("Label " + (*sucit)->getJumpLabel() 
-					+ " that the instruction " + instrTypeToStr((*sucit)->getType())
+					+ " that the instruction " + instrTypeToWholeInstrStr((*sucit)->getType())
 					+" is trying to jump to is not defined!");
 			}
 			jump_instr = getInstrFromLabel((*sucit)->getJumpLabel());
@@ -218,6 +218,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 	int offsetNum;
 	switch (i_type)
 	{
+	case I_XOR: // E → xor rid, rid, rid
 	case I_MUL: // E → mul rid, rid, rid
 	case I_SUB: // E → sub rid, rid, rid
 	case I_ADD: // E → add rid, rid, rid
@@ -453,10 +454,10 @@ std::string SymbolTable::makeInstructionErrorMsg(int argPos, Variable::VariableT
 	std::vector <std::string> posName = { "first", "second","third" };
 	if (argPos >=0 && argPos <=2)
 	{
-		return std::string("Undefined "+posName[argPos] +" variable (" + varTypeToStr(varType) + ") in the " + instrTypeToStr(i_type) + " instruction: " + faultyParam);
+		return std::string("Undefined "+posName[argPos] +" variable (" + varTypeToStr(varType) + ") in the " + instrTypeToWholeInstrStr(i_type) + " instruction: " + faultyParam);
 	}
 	else {
-		return std::string("Undefined variable (" + varTypeToStr(varType) + ") in the " + instrTypeToStr(i_type) + " instruction: " + faultyParam);
+		return std::string("Undefined variable (" + varTypeToStr(varType) + ") in the " + instrTypeToWholeInstrStr(i_type) + " instruction: " + faultyParam);
 	}
 }
 

@@ -79,6 +79,18 @@ void SyntaxAnalysis::E()
 	std::list<std::string> dst; // name of destination variables
 	switch (currTok.getType())
 	{
+	case TokenType::T_XOR: // xor rid, rid, rid
+		eat(TokenType::T_XOR);
+		params.emplace_back(currTok.getValue());
+		eat(TokenType::T_R_ID);
+		eat(TokenType::T_COMMA);
+		params.emplace_back(currTok.getValue());
+		eat(TokenType::T_R_ID);
+		eat(TokenType::T_COMMA);
+		params.emplace_back(currTok.getValue());
+		eat(TokenType::T_R_ID);
+		symTab.makeInstruction(params, InstructionType::I_XOR);
+		break;
 	case TokenType::T_MUL: // mul rid, rid, rid
 		eat(TokenType::T_MUL);
 		params.emplace_back(currTok.getValue());

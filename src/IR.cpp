@@ -133,7 +133,7 @@ void Instruction::addPred(Instruction * instr)
 void Instruction::printInstruction()
 {
 
-	std::cout << "Type: " << instrTypeToStr(m_type);
+	std::cout << "Type: " << instrTypeToWholeInstrStr(m_type);
 
 
 	std::cout << "\t\tPosition: " <<  m_position;
@@ -220,30 +220,11 @@ std::string Instruction::convertToMIPSString()
 	{
 	case I_NO_TYPE:
 		break;
-	case I_MUL:
-		ss << "\tmul\t";
-		first = true;
-		for each (Variable* var in m_dst)
-		{
-			if (first)
-			{
-				ss << "$t" << var->getAsignment() - 1;
-				first = false;
-			}
-			else
-			{
-				ss << ", $t" << var->getAsignment() - 1;
-			}
-
-		}
-		for each (Variable* var in m_src)
-		{
-			ss << ", $t" << var->getAsignment() - 1;
-		}
-		break;
-
+	case I_XOR:	// E → xor rid, rid, rid
+	case I_MUL:	// E → mul rid, rid, rid
+	case I_SUB: // E → sub rid, rid, rid
 	case I_ADD: // E → add rid, rid, rids
-		ss << "\tadd\t";
+		ss << "\t" << instrTypeStr(m_type)  << "\t";
 		first = true;
 		for each (Variable* var in m_dst)
 		{
@@ -284,27 +265,6 @@ std::string Instruction::convertToMIPSString()
 			ss << ", $t" << var->getAsignment() - 1;
 		}
 		ss << ", "  << getNumValue();
-		break;
-	case I_SUB: // E → sub rid, rid, rid
-		ss << "\tsub\t";
-		first = true;
-		for each (Variable* var in m_dst)
-		{
-			if (first)
-			{
-				ss << "$t" << var->getAsignment() - 1;
-				first = false;
-			}
-			else
-			{
-				ss << ", $t" << var->getAsignment() - 1;
-			}
-
-		}
-		for each (Variable* var in m_src)
-		{
-			ss << ", $t" << var->getAsignment() - 1;
-		}
 		break;
 	case I_LA: // E → la rid, mids
 		ss << "\tla\t";

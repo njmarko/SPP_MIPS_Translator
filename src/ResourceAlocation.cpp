@@ -20,6 +20,13 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 
 void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig)
 {
+	//TODO: add r1,r2,r3 can be replaced with three instrucitons
+	/* sub r1,r1,r1
+	*  add r1,r1,r2
+	*  add r1,r1,r3
+	*/ 
+
+
 	// First the register variable with the most interferences is picked
 	std::map <Variable*, int> varRang = makeVarInterferenceMap(ig,r_vars);
 	Variable* replacedVar = nullptr;

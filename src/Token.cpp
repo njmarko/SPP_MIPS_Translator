@@ -102,6 +102,7 @@ string Token::tokenTypeToString(TokenType t)
 		case T_END_OF_FILE:		return "[T_END_OF_FILE]";
 		case T_ERROR:			return "[T_ERROR]";
 		case T_MUL:				return "[T_MUL]";
+		case T_XOR:				return "[T_XOR]";
 		default:				return "";
 	}
 }

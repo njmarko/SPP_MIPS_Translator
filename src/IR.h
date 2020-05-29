@@ -364,6 +364,8 @@ public:
 	*/
 	void resetInstruction();
 
+	friend std::ostream& operator<<(std::ostream& out, const Instruction& v);
+
 private:
 	/*
 	* Position of the Instruction

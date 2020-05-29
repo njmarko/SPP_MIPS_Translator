@@ -11,7 +11,7 @@ const int INVALID_STATE = -2;
 /**
  * Number of states in FSM
  */
-const int NUM_STATES = 47;
+const int NUM_STATES = 50;
 
 /**
  * Number of supported characters
@@ -31,7 +31,7 @@ const int __EMPTY__ = 0;
 /**
  * Number of regs in processor.
  */
-const int __REG_NUMBER__ = 4;
+const int __REG_NUMBER__ = 5;
 
 /**
  * Use these to print liveness analysis dump.
