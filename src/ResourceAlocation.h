@@ -58,6 +58,16 @@ class ResourceAllocation :public Visitor {
 	void decomposeInstructions(Instructions& instr, Variable* replaced_var);
 
 	/*
+	* Checks if the memory variables value is changed in the program
+	* and if the value is not changed (no la and sw instruction combination that writes to it)
+	* then it tries to replace la and lw instructions with li instruction and last source parameter
+	* in some instruction with immediate value (example: add instruction is changed into addi)
+	* @param reference to a list of instruction pointers
+	* @param reference to a list of memory variables
+	*/
+	void moveFromMemToImmediate(Instructions& instr,Variables& m_vars);
+
+	/*
 	* Helper function for the handleSpill function
 	* First it chooses a nemae for the var that is free, then It creates a new memory variable.
 	* @param reference to the list of memory variable pointers

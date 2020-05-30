@@ -122,6 +122,7 @@ int main(int argc, char* argv[])
 			catch (NoMoreSpillsPossible e) {
 				std::cout << e.what() << endl;
 				std::cout << "Output was not created! Number of registers="<<__REG_NUMBER__ << " was too small!" << endl;
+				symTab.printInstructions();
 				break;
 			}
 			catch (runtime_error e)

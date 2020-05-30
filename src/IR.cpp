@@ -411,6 +411,16 @@ void Instruction::resetInstruction()
 	m_pred.clear();
 }
 
+void Instruction::setNumValue(int val)
+{
+	numValue = val;
+}
+
+void Instruction::setInstrType(InstructionType type)
+{
+	m_type = type;
+}
+
 
 
 std::string varTypeToStr(Variable::VariableType type)
@@ -423,6 +433,8 @@ std::string varTypeToStr(Variable::VariableType type)
 	default:						return "";
 	};
 }
+
+
 
 
 

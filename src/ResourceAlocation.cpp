@@ -87,6 +87,11 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	*/
 	decomposeInstructions(instr, replacedVar);
 
+	/*
+	* Check if the memory variable is being used for reading only, and if it is
+	* check if it can be transformed into the immediate operand
+	*/
+	moveFromMemToImmediate(instr, m_vars);
 
 	// A new memory variable is needed for storing the spilled data
 	Variable* mem_var = createNewMemVariable(m_vars);
@@ -201,6 +206,13 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		}
 	}
 	/*
+	* Next add the replaced variable to the list of spilled variables. It was aded here after the other variables that were added
+	* in the process of spilling because of the easier error printing because it needs to show the variable that was chosen for the spill
+	*/
+	spilled_vars.push_back(replacedVar);
+
+
+	/*
 	* Next step is to go trough all the instructions and choose the new position numbers for them.
 	* At the same time update the list of labels, so the labels now hold the correct position of the
 	* first instruction that belongs to them
@@ -224,11 +236,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		}
 		++pos_num;
 	}
-	/*
-	* Finally add the replaced variable to the list of spilled variables. It was aded here after the other variables that were added
-	* in the process of spilling because of the easier error printing because it needs to show the variable that was chosen for the spill
-	*/
-	spilled_vars.push_back(replacedVar); 
+
 
 	/*
 	* Reset of some data is needed because connecting instructions, liveness analysis and register allocation has to be performed again.
@@ -397,6 +405,149 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 		delete var;
 	}
 	deleted.clear();
+}
+
+void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables & m_vars)
+{
+	// if the instruction for storing has an offset then this program will not try to 
+	// evaluate any further and no moving from memory to immediate will happen
+	for each (Instruction* var in instr)
+	{
+		if (var->getType() == InstructionType::I_SW && var->getNumValue() != 0) {
+			return;
+		}
+	}
+
+	// candidate mem vars that will be candidates for moving to immediate operands
+	Variables m_vars_candidates;
+
+	// first we need to find mem vars that are read only and can fit into immediate operands (16 bits signed)
+	for each (Variable* m_var in m_vars)
+	{
+		/*
+		* Check if the mem variable value is in range to be replaced by immediate operand
+		* range is -32,768 to +32,767 for signed immediate operand (16 bits)
+		*/
+		if (m_var->getValue() < -32768 || m_var->getValue() > 32767)
+		{
+			continue; // if it is not in range then move to the next mem var
+		}
+
+		/*
+		* Check if there are any instructions that write to the current memory variables
+		* First check what reg variable holds the address of the m_var, and then if that reg_var
+		* is not redefined and is in sw instruction as a second source parameter, and the nubmber 
+		* before the parenthesis is 0
+		*/
+		Variables address_regs; // registers that hold the address of the memory location
+		m_vars_candidates.push_back(m_var); // add it right away, and only remove it if sw writes to that location
+		for each (Instruction* i_var in instr)
+		{
+			if (i_var->getDst().size() > 0 && find(address_regs.cbegin(),address_regs.cend(),i_var->getDst().front()) != address_regs.cend())
+			{
+				// if the register that holds the adress is being redefined, remove it from the list of address registers
+				address_regs.remove(i_var->getDst().front());
+			}
+
+			if (i_var->getType() == InstructionType::I_LA)
+			{
+				// if the memory adress was loaded into register with la instruction
+				if (find(i_var->getSrc().cbegin(), i_var->getSrc().cend(),m_var) != i_var->getSrc().cend())
+				{
+					// this is a potential candidate for replacement by immediate operator if it turns out the memory is read only
+					address_regs.push_back(i_var->getDst().front());
+				}
+			}
+			if (i_var->getType() == InstructionType::I_SW) {
+				// if sw instruction writes to the memory location then that memory location cant be transformed into immediate operand
+				if (find(address_regs.cbegin(),address_regs.cend(),i_var->getSrc().back()) != address_regs.cend())
+				{
+					address_regs.clear();
+					m_vars_candidates.remove(m_var); // this mem variable was written to so it is not a candidate
+					break;
+				}
+			}			
+		}
+	}
+
+	/*
+	* la instructions that load the readonly mem loc address can't be deleted 
+	* because maybe they are used for some other purpose (rare but possible)
+	* example: system call that prints the address
+	*/
+
+	/*
+	* At this point the mem variables that are read only are known
+	* and they can now possibly be replaced with imediate operands
+	*/
+	for each (Variable* m_var in m_vars_candidates)
+	{
+		// reg variables that hold the address of the mem var
+		Variables address_regs;
+
+		// reg variables that hold the value loaded from the memory
+		Variables regs_loaded_vals; 
+		for each (Instruction* i_var in instr)
+		{
+			if (i_var->getDst().size() > 0 && find(address_regs.cbegin(), address_regs.cend(), i_var->getDst().front()) != address_regs.cend())
+			{
+				// if the register that holds the adress is being redefined, remove it from the list of address registers
+				address_regs.remove(i_var->getDst().front());
+			}
+			if (i_var->getType() == InstructionType::I_LA)
+			{
+				// if the memory adress was loaded into register with la instruction
+				if (find(i_var->getSrc().cbegin(), i_var->getSrc().cend(), m_var) != i_var->getSrc().cend())
+				{
+					// this is a potential candidate for replacement by immediate operator if it turns out the memory is read only
+					address_regs.push_back(i_var->getDst().front());
+				}
+			}
+			if (i_var->getType() == InstructionType::I_LW) {
+				// if lw instruction loads from the current mem var into register
+				if (find(address_regs.cbegin(), address_regs.cend(), i_var->getSrc().back()) != address_regs.cend())
+				{
+					// this register will be monitored and if it appears in add instruction it will be replaced with immediate value
+					regs_loaded_vals.push_back(i_var->getDst().front()); 
+					// also change this instruction to the load immediate (I_LI) type
+					i_var->getSrc().clear(); // cleares the source set because load immediate only have destination set
+					i_var->getUse().clear(); // cleares the use set because load immediate only have def set
+					i_var->setNumValue(m_var->getValue()); // assigns the mem value as immediate operand
+					i_var->setInstrType(InstructionType::I_LI); // change to type of the instruction to load immediate
+					continue; // to avoid removing of the variable from regs_loaded_vals at the end of the loop
+				}
+			}
+
+			if (i_var->getType() == InstructionType::I_ADD) {
+				// if the add instruction contains register loaded from the memory
+
+				// check if the last operand can be replaced by immediate value
+				if (find(regs_loaded_vals.cbegin(), regs_loaded_vals.cend(), i_var->getSrc().back()) != regs_loaded_vals.cend())
+				{
+					i_var->getSrc().pop_back(); // remove the last operand from source
+					i_var->getUse().pop_back(); // remove the last operand from use
+					i_var->setNumValue(m_var->getValue()); // assigns the mem value as immediate operand
+					i_var->setInstrType(InstructionType::I_ADDI); // change to type of the instruction to addi
+				}
+				// check if the first operand can be replaced by immediate value
+				else if (find(regs_loaded_vals.cbegin(), regs_loaded_vals.cend(), i_var->getSrc().front()) != regs_loaded_vals.cend())
+				{
+					i_var->getSrc().pop_front(); // remove the first operand(this was the second operand will become the "first" operand)
+					i_var->getUse().pop_front(); // remove the first operand from use set
+					i_var->setNumValue(m_var->getValue()); // assigns the mem value as immediate operand
+					i_var->setInstrType(InstructionType::I_ADDI); // change to type of the instruction to addi
+				}
+			}
+
+			// this is at the end because instruction can use the reg with value from memory and at the same time define it (example add r1,r1,r2)
+			if (i_var->getDst().size() > 0 && find(regs_loaded_vals.cbegin(), regs_loaded_vals.cend(), i_var->getDst().front()) != regs_loaded_vals.cend())
+			{
+				// if the register that holds value is being redefined, remove it from the list of registers with loaded values
+				regs_loaded_vals.remove(i_var->getDst().front());
+			}
+
+		}
+	}
 }
 
 Variable * ResourceAllocation::createNewMemVariable(Variables& m_vars)

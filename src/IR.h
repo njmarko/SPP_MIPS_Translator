@@ -377,7 +377,19 @@ public:
 	*/
 	void resetInstruction();
 
-	friend std::ostream& operator<<(std::ostream& out, const Instruction& v);
+	/*
+	* Setter for the numerical value of the instruction
+	* @param int value associated with the instruction
+	*/
+	void setNumValue(int val);
+
+
+	/*
+	* Setter for the instructions type
+	* @param enum that represents Instruction Type
+	*/
+	void setInstrType(InstructionType type);
+
 
 private:
 	/*
