@@ -10,20 +10,25 @@
 /*
 * Class that will perform syntax analysis of the MAVN code
 */
-class SyntaxAnalysis {
+class SyntaxAnalysis:public Visitor {
 public:
 	/*
 	* Constructor that takes areference to lexical analysis module
 	* @param reference to a lexer that will be used to get tokens
 	* @param reference to a SymbolTable that holds collected data
 	*/
-	SyntaxAnalysis(LexicalAnalysis& lex, SymbolTable& symTab);
+	SyntaxAnalysis(LexicalAnalysis& lex);
 
+	/*
+	* Visitor class has pure virtual function visit that has to be implemented.
+	* Function visit is called by the class that this Visitor visits
+	*/
+	void visit(SymbolTable& symTab)override;
 	/*
 	* Method that will do the syntax analysis
 	* @returns true if syntax analysis was successfull
 	*/
-	bool Do();
+	bool Do(SymbolTable & symTab);
 private:
 
 	/*
@@ -34,24 +39,24 @@ private:
 	/*
 	* Starting nonterminal symbol Q
 	*/
-	void Q();
+	void Q(SymbolTable & symTab);
 
 	/*
 	* Nonterminal symbol S
 	* Variables,labels and functions will be created here
 	*/
-	void S();
+	void S(SymbolTable & symTab);
 
 	/*
 	* Nonterminal symbol L
 	*/
-	void L();
+	void L(SymbolTable & symTab);
 
 	/*
 	* Nonterminal symbol E
 	* Instructions will be created here
 	*/
-	void E();
+	void E(SymbolTable & symTab);
 
 	/*
 	* Token that is currently processed
@@ -62,11 +67,6 @@ private:
 	* A reference to the lexer that will be used to get tokens
 	*/
 	LexicalAnalysis& lexAnalysis;
-
-	/*
-	* A reference to the SymbolTable that will be used to store data
-	*/
-	SymbolTable& symTab;
 
 	/*
 	* Iterator that goes trought the output of the lexical analysis

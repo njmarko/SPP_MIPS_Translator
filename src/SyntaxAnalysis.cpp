@@ -1,26 +1,30 @@
 #include "SyntaxAnalysis.h"
 
-SyntaxAnalysis::SyntaxAnalysis(LexicalAnalysis & lex, SymbolTable& _symTab): 
-	tokIter(lexAnalysis.getTokenList().begin()),err(false), lexAnalysis(lex),symTab(_symTab),
-	linePos(0)
+SyntaxAnalysis::SyntaxAnalysis(LexicalAnalysis & lex): 
+	tokIter(lexAnalysis.getTokenList().begin()),err(false), lexAnalysis(lex),linePos(0)
 {
 }
 
-bool SyntaxAnalysis::Do()
+void SyntaxAnalysis::visit(SymbolTable & symTab)
+{
+	Do(symTab);
+}
+
+bool SyntaxAnalysis::Do(SymbolTable & symTab)
 {
 	currTok = getNextToken();
-	Q();
+	Q(symTab);
 	return !err; //TODO: For now it just return the bool value
 }
 
-void SyntaxAnalysis::Q()
+void SyntaxAnalysis::Q(SymbolTable & symTab)
 {
-	S();
+	S(symTab);
 	eat(TokenType::T_SEMI_COL);
-	L();
+	L(symTab);
 }
 
-void SyntaxAnalysis::S()
+void SyntaxAnalysis::S(SymbolTable & symTab)
 {
 	std::string s_id;
 	std::string s_val;
@@ -52,15 +56,15 @@ void SyntaxAnalysis::S()
 		eat(TokenType::T_ID);
 		eat(TokenType::T_COL);
 		symTab.addLabel(s_id);
-		E();
+		E(symTab);
 		break;
 	default: // E 
-		E();
+		E(symTab);
 		break;
 	}
 }
 
-void SyntaxAnalysis::L()
+void SyntaxAnalysis::L(SymbolTable & symTab)
 {
 	switch (currTok.getType())
 	{
@@ -68,12 +72,12 @@ void SyntaxAnalysis::L()
 		//eat(TokenType::T_END_OF_FILE);
 		break;
 	default:
-		Q();
+		Q(symTab);
 		break;
 	}
 }
 
-void SyntaxAnalysis::E()
+void SyntaxAnalysis::E(SymbolTable & symTab)
 {
 	std::list<std::string> params; // name of source variables
 	std::list<std::string> dst; // name of destination variables

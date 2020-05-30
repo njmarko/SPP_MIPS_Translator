@@ -90,18 +90,13 @@ int main(int argc, char* argv[])
 			throw runtime_error("\nException! Lexical analysis failed!\n");
 		}
 
-		SyntaxAnalysis syn(lex,symTab);
+		SyntaxAnalysis syn(lex);
 		std::cout << "\nPerforming syntax analysis..." << endl;
-		retVal = syn.Do();
+		symTab.accept(syn);
+		//retVal = syn.Do();
+		std::cout << "Syntax analysis finished successfully!" << endl;
 
-		if (retVal)
-		{
-			std::cout << "Syntax analysis finished successfully!" << endl;
-		}
-		else
-		{
-			throw runtime_error("\nException! Syntax analysis failed!\n");
-		}
+		//throw runtime_error("\nException! Syntax analysis failed!\n");
 
 		while (true) {
 			std::cout << "\nConnecting the instructions..." << endl;
@@ -137,10 +132,7 @@ int main(int argc, char* argv[])
 				std::cout << e.what() << endl;
 				continue;
 			}
-
 		}
-
-
 	}
 	catch (runtime_error e)
 	{

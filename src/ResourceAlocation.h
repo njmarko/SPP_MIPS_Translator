@@ -8,6 +8,7 @@
 
 /*
 * An exception that is thrown when no more register variables can be spilled into the memory
+* It is used to end the spilling loop
 */
 struct NoMoreSpillsPossible :public std::runtime_error {
 	/*
@@ -24,9 +25,6 @@ struct NoMoreSpillsPossible :public std::runtime_error {
 * 
 */
 class ResourceAllocation :public Visitor {
-
-
-
 
 	/*
 	* Visitor class has pure virtual function visit that has to be implemented.
