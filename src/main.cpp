@@ -106,32 +106,40 @@ int main(int argc, char* argv[])
 		while (true) {
 			std::cout << "\nConnecting the instructions..." << endl;
 			symTab.connectInstructions();
-			std::cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed.\n" << endl;
-			symTab.printInstructions();
+			std::cout << "Instructions connection successfull. Successor and predecessor sets were succesfully formed." << endl;
+			//symTab.printInstructions();
 
-			std::cout << "\nDoing Liveness analysis..." << endl;
+			std::cout << "Doing Liveness analysis..." << endl;
 			symTab.accept(livenessAnalysis);
-			std::cout << "Liveness analysis finished successfully! In and out sets were formed!\n" << endl;
-			symTab.printInstructions();
+			std::cout << "Liveness analysis finished successfully! In and out sets were formed!" << endl;
+			//symTab.printInstructions();
 
 			try
 			{
-				std::cout << "\nDoing Resource allocation..." << endl;
+				std::cout << "Doing Resource allocation..." << endl;
 				symTab.accept(resourceAllocation);
 				std::cout << "Resource allocation finished successfully! Registers were successfully allocated!\n" << endl;
 				symTab.printInstructions();
 				symTab.getInterferenceGraph().printIGMatrix();
+				// if no spill happens then the MIPS output file is created
+				std::cout << "\nCreating MIPS output file..." << endl;
+				symTab.accept(fileHandler);
+				std::cout << "\nOutput file with the MIPS code successfully created!" << endl;
 				break; // if no spills happen
+			}
+			catch (NoMoreSpillsPossible e) {
+				std::cout << e.what() << endl;
+				std::cout << "Output was not created! Number of registers="<<__REG_NUMBER__ << " was too small!" << endl;
+				break;
 			}
 			catch (runtime_error e)
 			{
 				std::cout << e.what() << endl;
 				continue;
 			}
+
 		}
-		std::cout << "\nCreating MIPS output file..." << endl;
-		symTab.accept(fileHandler);
-		std::cout << "\nOutput file with the MIPS code successfully created!" << endl;
+
 
 	}
 	catch (runtime_error e)
@@ -139,6 +147,6 @@ int main(int argc, char* argv[])
 		std::cout << e.what() << endl;
 		return 1;
 	}
-
+	system("pause");
 	return 0;
 }

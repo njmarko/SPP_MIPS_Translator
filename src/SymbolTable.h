@@ -227,6 +227,12 @@ public:
 	*/
 	void addFunction(const std::string& func_name);
 
+	/*
+	* Method for adding a pointer to a variable that is selected to be spilled into memory
+	* into a list of variable pointers
+	* @param pointer to a variable that is being spilled into memory
+	*/
+	void addSpilledVar(Variable * v);
 
 	/*
 	* Creates the error message for semantic instruction errors
@@ -260,6 +266,12 @@ public:
 	* @returns reference to the simplification stack
 	*/
 	SimplificationStack& getSimplificationStack();
+
+	/*
+	* Getter for spilled variables list
+	* @returns reference to the spilled variables list of variable pointers
+	*/
+	Variables& getSpilledVars();
 private:
 
 	/*
@@ -310,6 +322,14 @@ private:
 	* It constains register variable pointers
 	*/
 	SimplificationStack ss;
+
+	/*
+	* List of variable pointer that were spilled to memory as well as variables that 
+	* were added in the process of spilling because they should not be spilled.
+	* This list is needed to avoid infinite loops if the same variable is selected
+	* over and over again.
+	*/
+	Variables spilledVars;
 
 };
 

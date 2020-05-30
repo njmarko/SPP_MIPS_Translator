@@ -4,6 +4,18 @@
 #include <map>
 #include <set>
 #include <string>
+#include <algorithm>
+
+/*
+* An exception that is thrown when no more register variables can be spilled into the memory
+*/
+struct NoMoreSpillsPossible :public std::runtime_error {
+	/*
+	* Constructor with a message that will be displayed
+	* @param message that will be displayed
+	*/
+	NoMoreSpillsPossible(const char* message) :runtime_error(message) {};
+};
 
 /*
 * Class that will do the resource allocation
@@ -12,6 +24,9 @@
 * 
 */
 class ResourceAllocation :public Visitor {
+
+
+
 
 	/*
 	* Visitor class has pure virtual function visit that has to be implemented.
@@ -29,8 +44,9 @@ class ResourceAllocation :public Visitor {
 	* @param reference to the list of memory variable pointers
 	* @param reference to the list of pairs of label and function names, and the first instructions that follow after them
 	* @param reference to the interference graph
+	* @param reference to the list of variable pointers that were already spilled to the memory
 	*/
-	void handleSpill(Instructions& instr, Variables& r_vars, Variables& m_vars, Labels& labels, InterferenceGraph& ig);
+	void handleSpill(Instructions& instr, Variables& r_vars, Variables& m_vars, Labels& labels, InterferenceGraph& ig, Variables& spilled_vars);
 
 	/*
 	* Helper function for the handleSpill function

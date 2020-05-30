@@ -449,6 +449,11 @@ void SymbolTable::addFunction(const std::string& func_name)
 	labels.emplace_back(func_name,-1); 
 }
 
+void SymbolTable::addSpilledVar(Variable * v)
+{
+	spilledVars.push_back(v);
+}
+
 std::string SymbolTable::makeInstructionErrorMsg(int argPos, Variable::VariableType varType, InstructionType i_type, const std::string & faultyParam)
 {
 	std::vector <std::string> posName = { "first", "second","third" };
@@ -484,4 +489,9 @@ InterferenceGraph & SymbolTable::getInterferenceGraph()
 SimplificationStack & SymbolTable::getSimplificationStack()
 {
 	return ss;
+}
+
+Variables & SymbolTable::getSpilledVars()
+{
+	return spilledVars;
 }

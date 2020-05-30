@@ -11,14 +11,14 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 	catch (const std::runtime_error e) // if the spill happens
 	{
 		std::cout << e.what() << std::endl;
-		handleSpill(symTab.getInstructions(),symTab.getRegVariables(),symTab.getMemVariables(),symTab.getLabels(),symTab.getInterferenceGraph());
+		handleSpill(symTab.getInstructions(),symTab.getRegVariables(),symTab.getMemVariables(),symTab.getLabels(),symTab.getInterferenceGraph(),symTab.getSpilledVars());
 		symTab.resetData(); // reset the data for the connect instructions,liveness analysis and resource alocation to work properly.
 		// throws the error so another iteration of  the algorithm is performed starting from liveness analysis
-		throw std::runtime_error("Handling of the spilling was performed."); 
+		throw std::runtime_error("Register " + symTab.getSpilledVars().back()->getName() + " was spilled to memory location " + symTab.getMemVariables().back()->getName() + "!"); 
 	}
 }
 
-void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig)
+void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig, Variables & spilled_vars)
 {
 	//TODO: add r1,r2,r3 can be replaced with three instrucitons
 	/* 
@@ -62,16 +62,27 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	*/
 
 
-	// First the register variable with the most interferences is picked
+	// First the register variable with the most interferences is picked only if was not previously spilled into memory
 	std::map <Variable*, int> varRang = makeVarInterferenceMap(ig,r_vars);
 	Variable* replacedVar = nullptr;
 	for each (std::pair<Variable*,int> p in varRang)
 	{
-		if (replacedVar == nullptr || p.second >varRang[replacedVar])
+		if (std::find(spilled_vars.cbegin(),spilled_vars.cend(),p.first) == spilled_vars.cend()) // if the var was not spilled
 		{
-			replacedVar = p.first;
+			if (replacedVar == nullptr || p.second >varRang[replacedVar])
+			{
+				replacedVar = p.first;
+			}
 		}
 	}
+	
+	if (replacedVar == nullptr)
+	{
+		// TODO: decide how to handle the case when all the variables are already spilled
+		throw NoMoreSpillsPossible("No more spilling is possible because all the variables are already spilled!");
+	}
+	
+
 	// A new memory variable is needed for storing the spilled data
 
 	Variable* mem_var = createNewMemVariable(m_vars);
@@ -108,6 +119,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			Variables dstList;
 			Variable* r1 = createNewRegVariable(r_vars);
 			r_vars.push_back(r1); // added to the list of all reg variables used in the code that is in symTable
+			spilled_vars.push_back(r1); // added to the lsit of all reg variables that were spilled or added during the spilling procedure
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList,(*cit)->getParentLabel());
 			la->fillDefVariables(); // la instruction only fills the def set
@@ -153,6 +165,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			Variables dstList;
 			Variable* r1 = createNewRegVariable(r_vars);
 			r_vars.push_back(r1);  // added to the list of all reg variables used in the code that is in symTable
+			spilled_vars.push_back(r1); // added to the lsit of all reg variables that were spilled or added during the spilling procedure
 			dstList.push_back(r1);
 			Instruction* la = new Instruction((*cit)->getPos(), InstructionType::I_LA, dstList, memList, (*cit)->getParentLabel());
 			la->fillDefVariables(); // la instruction only fills the def set
@@ -205,6 +218,8 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		}
 		++pos_num;
 	}
+
+	spilled_vars.push_back(replacedVar); // finally add the replaced variable to the list of spilled variables
 
 	/*
 	* Reset of some data is needed because connecting instructions, liveness analysis and register allocation has to be performed again.
