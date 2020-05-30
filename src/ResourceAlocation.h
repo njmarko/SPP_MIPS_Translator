@@ -43,8 +43,19 @@ class ResourceAllocation :public Visitor {
 	* @param reference to the list of pairs of label and function names, and the first instructions that follow after them
 	* @param reference to the interference graph
 	* @param reference to the list of variable pointers that were already spilled to the memory
+	* @throws runtime_error::NoMoreSpillsPossible if all the register variables are already spilled to the memory
 	*/
 	void handleSpill(Instructions& instr, Variables& r_vars, Variables& m_vars, Labels& labels, InterferenceGraph& ig, Variables& spilled_vars);
+
+
+	/*
+	* Decomposes the instructions that constain the variable that is being replaced 
+	* and that use 3 different registers into 3 instructions that use at most 2 registers each
+	* Example: add r1,r2,r3 is decomposed int xor r1,r1,r1; add r1,r1,r2; add r1,r1,r3;
+	* @param reference to a list of instruction pointers
+	* @param pointer to a variable that is being spilled
+	*/
+	void decomposeInstructions(Instructions& instr, Variable* replaced_var);
 
 	/*
 	* Helper function for the handleSpill function

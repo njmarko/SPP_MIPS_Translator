@@ -288,6 +288,19 @@ public:
 	Instructions& getSucc();
 
 	/*
+	* Getter for the list of Destination variables
+	* @returns reference to the list of DST variable pointers
+	*/
+	Variables& getDst();
+
+	/*
+	* Getter for the list of Source variables
+	* @returns reference to the list of SRC variable pointers
+	*/
+	Variables& getSrc();
+
+
+	/*
 	* Used for adding a successor instruction
 	* @param poinster to the successor instruction
 	*/

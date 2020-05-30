@@ -120,6 +120,16 @@ Instructions& Instruction::getSucc()
 	return m_succ;
 }
 
+Variables & Instruction::getDst()
+{
+	return m_dst;
+}
+
+Variables & Instruction::getSrc()
+{
+	return m_src;
+}
+
 void Instruction::addSucc(Instruction * instr)
 {
 	m_succ.push_back(instr);

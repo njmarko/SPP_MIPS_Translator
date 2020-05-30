@@ -93,10 +93,7 @@ int main(int argc, char* argv[])
 		SyntaxAnalysis syn(lex);
 		std::cout << "\nPerforming syntax analysis..." << endl;
 		symTab.accept(syn);
-		//retVal = syn.Do();
 		std::cout << "Syntax analysis finished successfully!" << endl;
-
-		//throw runtime_error("\nException! Syntax analysis failed!\n");
 
 		while (true) {
 			std::cout << "\nConnecting the instructions..." << endl;
