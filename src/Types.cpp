@@ -18,6 +18,7 @@ std::string instrTypeToWholeInstrStr(InstructionType type)
 	case I_MUL:			return "mul rid, rid, rid";
 	case I_XOR:			return "xor rid, rid, rid";
 	case I_NEG:			return "neg rid, rid";
+	case I_BGEZ:		return "bgez rid, id";
 	default:			return "";
 	}
 }
@@ -40,6 +41,7 @@ std::string instrTypeStr(InstructionType type)
 	case I_MUL:			return "mul";
 	case I_XOR:			return "xor";
 	case I_NEG:			return "neg";
+	case I_BGEZ:		return "bgez";
 	default:			return "";
 	}
 }

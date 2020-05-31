@@ -39,6 +39,7 @@ enum TokenType
 	T_MUL,			// mul
 	T_XOR,			// xor
 	T_NEG,			// neg
+	T_BGEZ,			// bgez
 
 	// operators
 	T_COMMA,		//,
@@ -73,6 +74,7 @@ enum InstructionType
 	I_MUL,
 	I_XOR,
 	I_NEG,
+	I_BGEZ,
 };
 
 /*

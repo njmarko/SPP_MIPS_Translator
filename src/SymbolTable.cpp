@@ -348,12 +348,13 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		//ins->fillDefVariables();
 		ins->fillUseVariables();
 		break;
+	case I_BGEZ: // E → bgez rid, id
 	case I_BLTZ: // E → bltz rid, id
 		/*
 		* Existance of the lable that is being jumped to will not be checked here
 		* because the target lable can be declared after this instruction.
 		* Existance of the lable will be checked in the later steps
-		* one all instructions,labels and variables have been added
+		* once all instructions,labels and variables have been added
 		*/
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{
@@ -370,7 +371,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		* Existance of the lable that is being jumped to will not be checked here
 		* because the target lable can be declared after this instruction.
 		* Existance of the lable will be checked in the later steps 
-		* one all instructions,labels and variables have been added
+		* once all instructions,labels and variables have been added
 		*/
 		// Increments the instruction counter whenever an instruction is created
 		ins = new Instruction(instrCount++, i_type, dst, src, *(cit_params),getParentLabel());

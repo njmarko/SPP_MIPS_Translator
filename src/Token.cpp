@@ -104,6 +104,7 @@ string Token::tokenTypeToString(TokenType t)
 		case T_MUL:				return "[T_MUL]";
 		case T_XOR:				return "[T_XOR]";
 		case T_NEG:				return "[T_NEG]";
+		case T_BGEZ:			return "[T_BGEZ]";
 		default:				return "";
 	}
 }

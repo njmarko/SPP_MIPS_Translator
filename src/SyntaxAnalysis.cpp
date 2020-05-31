@@ -83,6 +83,15 @@ void SyntaxAnalysis::E(SymbolTable & symTab)
 	std::list<std::string> dst; // name of destination variables
 	switch (currTok.getType())
 	{
+	case TokenType::T_BGEZ: // bltz rid, id
+		eat(TokenType::T_BGEZ);
+		params.emplace_back(currTok.getValue());
+		eat(TokenType::T_R_ID);
+		eat(TokenType::T_COMMA);
+		params.emplace_back(currTok.getValue());
+		eat(TokenType::T_ID);
+		symTab.makeInstruction(params, InstructionType::I_BGEZ);
+		break;
 	case TokenType::T_NEG: // neg rid, rid
 		eat(TokenType::T_NEG);
 		params.emplace_back(currTok.getValue());

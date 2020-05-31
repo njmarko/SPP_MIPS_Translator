@@ -342,6 +342,7 @@ std::string Instruction::convertToMIPSString()
 		// second source register actually holds the address of the mem variable that is the actuall destination of the instruction
 		ss << "($t" << (*(++m_src.cbegin()))->getAsignment() - 1 << ")"; 
 		break;
+	case I_BGEZ: // E → bgez rid, id
 	case I_BLTZ: // E → bltz rid, id
 		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
