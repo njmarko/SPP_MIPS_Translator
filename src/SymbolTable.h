@@ -256,6 +256,12 @@ public:
 	void printInstructions(const Instructions& instrs);
 
 	/*
+	* Checks if the main function exists because it is necessary for the program to run
+	* @returns true if function with the name main exists
+	*/
+	bool main_func_declared();
+
+	/*
 	* Getter for interference graph
 	* @returns reference to the interference graph
 	*/

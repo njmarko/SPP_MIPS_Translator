@@ -83,7 +83,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	/*
 	* Replace instructions where the spilled variable appears with the appropriate set of instructions
 	* if the conditions for the instruction replacement are satisfied 
-	* (example: replace add instruction olny if 3 different registers appear in it)
+	* (example: replace sub instruction only if it uses 2 different registers
 	*/
 	decomposeInstructions(instr, replacedVar);
 
@@ -253,18 +253,18 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 	Instructions deleted;
 	// iterate trough the instructions and add replacement instructions where it is necessary
 	for (Instructions::const_iterator cit = instr.cbegin(); cit != instr.cend();++cit) {
-		// only replace those instructions that satisfy the criteria that all 3 reg vars it contains are unique
+		// only replace those instructions that satisfy the criteria that all 2 reg vars it uses are unique
 		std::set<Variable*> unique_vars; // set cant hold duplicates
-		unique_vars.insert((*cit)->getDst().cbegin(), (*cit)->getDst().cend()); // add variables from the dst set
+		//unique_vars.insert((*cit)->getDst().cbegin(), (*cit)->getDst().cend()); // add variables from the dst set
 		unique_vars.insert((*cit)->getSrc().cbegin(), (*cit)->getSrc().cend()); // add variables from the src set
-		if (unique_vars.size()==3 && std::find(unique_vars.cbegin(),unique_vars.cend(),replaced_var)!=unique_vars.cend())
+		if (unique_vars.size()==2 && std::find(unique_vars.cbegin(),unique_vars.cend(),replaced_var)!=unique_vars.cend())
 		{
 
 			Variables dst_list;
 			Variables src_list;
 			Instruction* i1;
 			Instruction* i2;
-			Instruction* i3;
+			//Instruction* i3;
 			switch ((*cit)->getType())
 			{
 			case I_ADD: // add r1, r2, r3
@@ -328,6 +328,24 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				*   addi r1,r1,(value that r2 was holding) = live r1,r4
 				* In this case only 2 variables are live at each instruction that replaced sub instruction!
 				*/
+				// neg r1, r3
+				dst_list = (*cit)->getDst();
+				src_list.push_back((*cit)->getSrc().back()); // second source operand is being substracted from the first in sub instruction so we negate it
+				i1 = new Instruction((*cit)->getPos(), InstructionType::I_NEG, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i1->fillDefVariables();
+				i1->fillUseVariables();
+
+				// add r1, r1, r2
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().front());
+				i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i2->fillDefVariables();
+				i2->fillUseVariables();
+
+				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit); // queue the replaced instruction for deletion
 
 				//// xor r1, r1, r1
 				//dst_list = (*cit)->getDst();
@@ -401,27 +419,27 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				break;
 			}
 		}
-		// this if is for addi instruction
-		else if (unique_vars.size() == 2 && std::find(unique_vars.cbegin(), unique_vars.cend(), replaced_var) != unique_vars.cend())
-		{
-			switch ((*cit)->getType())
-			{
-			case I_ADDI: // addi r1, r2, number
-					/*
-					*	xor r1, r1, r1
-					*	addi r1, r1, 5
-					*	add r1, r1, r2
-					* and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
-					*	addi r1, r1, (value at the mem location)
-					*
-					* This doesn't reduce number of live variables (see add,sub,xor descriptions)
-					*/
-				
-				break;
-			default:
-				break;
-			}
-		}
+		//// this if is for addi instruction
+		//else if (unique_vars.size() == 2 && std::find(unique_vars.cbegin(), unique_vars.cend(), replaced_var) != unique_vars.cend())
+		//{
+		//	switch ((*cit)->getType())
+		//	{
+		//	case I_ADDI: // addi r1, r2, number
+		//			/*
+		//			*	xor r1, r1, r1
+		//			*	addi r1, r1, 5
+		//			*	add r1, r1, r2
+		//			* and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
+		//			*	addi r1, r1, (value at the mem location)
+		//			*
+		//			* This doesn't reduce number of live variables (see add,sub,xor descriptions)
+		//			*/
+		//		
+		//		break;
+		//	default:
+		//		break;
+		//	}
+		//}
 	}
 	/* 
 	* Remove all the instructions that were decomposed from the list of instruction pointers 

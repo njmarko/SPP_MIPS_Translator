@@ -35,6 +35,16 @@ void SymbolTable::accept(Visitor & v) {
 
 void SymbolTable::connectInstructions()
 {
+	// connectInstructions function can potentialy be moved to liveness analysis module
+
+	/*
+	* If the main function declaration doesn't exist, throw an error
+	*/
+	if (!main_func_declared())
+	{
+		throw std::runtime_error("Main function was not declared!");
+	}
+
 	Instructions::iterator sucit = instructions.begin();
 	Instructions::iterator predit = ++instructions.begin(); // predit is one step ahead of the sucit instruction
 	InstructionType type;
@@ -45,7 +55,7 @@ void SymbolTable::connectInstructions()
 		//This is where i connect branching instructions and throw error if the label doesn't exist
 		if (InstructionType::I_B==type || InstructionType::I_BLTZ==type)
 		{
-			//TODO: Change how label is checked if it is not possible to jump to the function
+			//DONE: Change how label is checked if it is not possible to jump to the function - it can jump to both function and label names
 			if (!isLabelDefined((*sucit)->getJumpLabel())) {
 				throw std::runtime_error("Label " + (*sucit)->getJumpLabel() 
 					+ " that the instruction " + instrTypeToWholeInstrStr((*sucit)->getType())
@@ -495,6 +505,17 @@ void SymbolTable::printInstructions(const Instructions& instrs)
 		var->printInstruction();
 		std::cout << std::string(60, '=') << std::endl;
 	}
+}
+
+bool SymbolTable::main_func_declared()
+{
+	for each (std::string func in functions)
+	{
+		if (func == "main") {
+			return true;
+		}
+	}
+	return false;
 }
 
 InterferenceGraph & SymbolTable::getInterferenceGraph()

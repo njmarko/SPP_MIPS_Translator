@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
 		SymbolTable symTab;
 		LivenessAnalysis livenessAnalysis;
 		ResourceAllocation resourceAllocation;
-
 		
 		if (argc == 3)
 		{
@@ -91,9 +90,9 @@ int main(int argc, char* argv[])
 			throw runtime_error("\nException! Lexical analysis failed!\n");
 		}
 
-		SyntaxAnalysis syn(lex);
+		SyntaxAnalysis syntaxAnalysis(lex);
 		std::cout << "\nPerforming syntax analysis..." << endl;
-		symTab.accept(syn);
+		symTab.accept(syntaxAnalysis);
 		std::cout << "Syntax analysis finished successfully!" << endl;
 
 		while (true) {

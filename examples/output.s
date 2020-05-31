@@ -14,12 +14,12 @@ main:
 	la	$t0, m1
 	li	$t0 ,6
 	la	$t0, m2
-	li	$t1 ,5
-	la	$t0, m5
-	sw	$t1, 0($t0)
-	li	$t0 ,1
-	la	$t1, m6
+	li	$t0 ,5
+	la	$t1, m5
 	sw	$t0, 0($t1)
+	li	$t1 ,1
+	la	$t0, m6
+	sw	$t1, 0($t0)
 	li	$t1 ,0
 	la	$t0, m4
 	sw	$t1, 0($t0)
@@ -30,25 +30,25 @@ lab:
 	la	$t0, m4
 	sw	$t1, 0($t0)
 	la	$t0, m5
-	lw	$t1, 0($t0)
-	la	$t0, m6
 	lw	$t0, 0($t0)
-	sub	$t1, $t0, $t1
-	la	$t0, m7
-	sw	$t1, 0($t0)
-	la	$t0, m6
-	lw	$t0, 0($t0)
-	addi	$t0, $t0, 1
-	la	$t1, m6
+	neg	$t0, $t0
+	la	$t1, m7
 	sw	$t0, 0($t1)
+	la	$t0, m6
+	lw	$t1, 0($t0)
 	la	$t0, m7
+	lw	$t0, 0($t0)
+	add	$t0, $t0, $t1
+	la	$t1, m7
+	sw	$t0, 0($t1)
+	la	$t0, m6
 	lw	$t1, 0($t0)
-	bltz	$t1, lab
-	la	$t0, m4
-	lw	$t1, 0($t0)
-	neg	$t1, $t1
-	la	$t0, m4
+	addi	$t1, $t1, 1
+	la	$t0, m6
 	sw	$t1, 0($t0)
+	la	$t0, m7
+	lw	$t0, 0($t0)
+	bltz	$t0, lab
 	la	$t0, m3
 	la	$t1, m4
 	lw	$t1, 0($t1)
