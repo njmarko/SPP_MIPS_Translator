@@ -108,19 +108,20 @@ void MyFileHandler::makeZeroBytesProgram()
 	std::experimental::filesystem::create_directory("../temp/zeroBytesProgram/");
 	std::stringstream stream;
 	char d;
-	std::string s = std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";
+	std::string s; /*= std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";*/
 	std::string empty = "";
+	std::string temp = "";
 	while (in >> std::noskipws >> d) {
 
-		if (s.length() > 160)
+		if (s.length() > 150)
 		{
+			s = std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_" + s;
 			std::ofstream out("../temp/zeroBytesProgram/"+ s);
 			out.write((char*)&empty,0);
 			out.close();
-			// make new string
 			++zbfile_id_cnt;
-			s = std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";
-			
+			// make new string
+			s = "";
 		}
 		if (zb_type == __BIN__)
 		{
@@ -128,8 +129,15 @@ void MyFileHandler::makeZeroBytesProgram()
 		}
 		else if (zb_type == __HEX__)
 		{
+			// using string strim as a way to get hexadecimal representation of the digit
 			stream << std::hex << (int)d;
-			s += stream.str();
+			temp = stream.str(); // helper variable for making sure all hex numbers have 2 digits
+			if (temp.size() < 2)
+			{
+				temp = "0" + temp; // if the number has only one digit, add a leading zero
+			}
+			s += temp;
+			stream.str(""); // clear the stream
 		}
 		
 		//std::cout << (char)std::stoi(std::bitset<8>(d).to_string(),0,2);
@@ -137,9 +145,11 @@ void MyFileHandler::makeZeroBytesProgram()
 		//std::cout << (int)d << std::endl;
 		//std::cout << s << std::endl;
 	}
+	s = std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_" + s;
 	std::ofstream out("../temp/zeroBytesProgram/" + s);
 	out.write((char*)&empty, 0);
 	out.close();
+	in.close();
 
 	//unsigned int x;
 	//unsigned char b;
@@ -150,18 +160,17 @@ void MyFileHandler::makeZeroBytesProgram()
 	//	x = (unsigned int)b;
 	//	std::cout << std::bitset<8>('Š') << std::endl;
 	//}
-
-
-
 }
 
 std::string MyFileHandler::createProgramFromFilenames()
 {
+	int inc = zb_type == __HEX__ ? 2 : 8; // ascii code in hexadeximal is saved using only hexadecimal digits per char
+	int base = zb_type == __HEX__ ? 16 : 2; // base for string to integer function
 	codeFromFilenames = "";
 	for (auto& name : fileNames) {
-		for (size_t i = 0; i < name.size(); i=i+8)
+		for (size_t i = 0; i < name.size(); i+=inc)
 		{
-			codeFromFilenames += (char)std::stoi(name.substr(i,8),0,2);
+			codeFromFilenames += (char)std::stoi(name.substr(i,inc),0, base);
 		}
 	}
 	std::ofstream out("../temp/loadedZeroBytesProgram.txt");
