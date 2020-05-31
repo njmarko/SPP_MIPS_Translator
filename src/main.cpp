@@ -55,6 +55,9 @@ int main(int argc, char* argv[])
 
 		MyFileHandler fileHandler(argc,argv);
 
+		//fileHandler.makeZeroBytesProgram();
+
+
 		bool retVal = false;
 
 		LexicalAnalysis lex;

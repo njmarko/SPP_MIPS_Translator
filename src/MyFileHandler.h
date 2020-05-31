@@ -5,6 +5,12 @@
 #include "IR.h"
 #include "SymbolTable.h"
 #include <fstream>
+#include <sstream>
+#include <iostream>
+#include <bitset>
+#include <stdio.h>
+#include <io.h>
+#include "Constants.h"
 
 /*
 * Vector of filename strings. It is used for reading the program code from filenames in the folder
@@ -55,6 +61,8 @@ public:
 	*/
 	Filenames get_filenames(Path path);
 
+	void makeZeroBytesProgram();
+
 	/*
 	* Combines the code in the filenames into one string
 	* @param vector of filename strings
@@ -82,6 +90,19 @@ public:
 	std::string getInFilepath();
 
 private:
+
+	/*
+	* Size of the id number of zerobytes files
+	* Used to determine number of leading zeors
+	*/
+	int id_size;
+
+	/*
+	* Id counter for the zero bytes program
+	* it is used when a new zero bytes program is created because it can 
+	* spread accross multiple files
+	*/
+	int zbfile_id_cnt;
 
 	/*
 	* Name of the folder with the files that contain the code in their names

@@ -45,4 +45,9 @@ const int __NO_DUMPS__ = 0;
 const int LEFT_ALIGN = 20;
 const int RIGHT_ALIGN = 25;
 
+/**
+* Size of the identificator for zerobytes files
+*/
+const int ZB_ID_SIZE = 10;
+
 #endif
