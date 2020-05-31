@@ -57,15 +57,22 @@ MyFileHandler::MyFileHandler(std::string folder_path):id_size(ZB_ID_SIZE), zbfil
 MyFileHandler::MyFileHandler(int argc, char * argv[]):id_size(ZB_ID_SIZE), zbfile_id_cnt(0)
 {
 	checkCommandlineArgs(argc, argv);
-	inFolderPath = inFolderPath;
-	get_filenames(inFolderPath);
-	createProgramFromFilenames();
+	if (argc == 4)
+	{
+		makeZeroBytesProgram();
+	}
+	else if (argc == 5)
+	{
+		get_filenames(inFolderPath);
+		createProgramFromFilenames();
+	}
+
 }
 
 std::vector<std::string> MyFileHandler::get_filenames(Path path)
 {
 	
-	//TODO: Add support for reading binary code from filenames (zeors and ones in ascii format) 
+	//DONE: Add support for reading binary code from filenames (zer0s and ones in ascii format) 
 	//as well as reading id's of those files(example: 13/01001001....)
 	//222 chars limit for google cloud
 	//long filenames can be enabled in windows for up to 32000 characters
@@ -95,9 +102,11 @@ void MyFileHandler::makeZeroBytesProgram()
 
 	std::ifstream in(inFilePath, std::ios::binary);
 	//std::ofstream out("../temp/temp.bin", std::ios::binary);
-	std::ostringstream ss();
+
+	// clear the temporary directory where zerobytes program will be stored
 	std::experimental::filesystem::remove_all("../temp/zeroBytesProgram/");
 	std::experimental::filesystem::create_directory("../temp/zeroBytesProgram/");
+	std::stringstream stream;
 	char d;
 	std::string s = std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";
 	std::string empty = "";
@@ -113,12 +122,20 @@ void MyFileHandler::makeZeroBytesProgram()
 			s = std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";
 			
 		}
-		s += std::bitset<8>(d).to_string();
+		if (zb_type == __BIN__)
+		{
+			s += std::bitset<8>(d).to_string();
+		}
+		else if (zb_type == __HEX__)
+		{
+			stream << std::hex << (int)d;
+			s += stream.str();
+		}
 		
-		std::cout << (char)std::stoi(std::bitset<8>(d).to_string(),0,2);
+		//std::cout << (char)std::stoi(std::bitset<8>(d).to_string(),0,2);
 		//out.write((char*)&d, sizeof d);
-		std::cout << (int)d << std::endl;
-		std::cout << s << std::endl;
+		//std::cout << (int)d << std::endl;
+		//std::cout << s << std::endl;
 	}
 	std::ofstream out("../temp/zeroBytesProgram/" + s);
 	out.write((char*)&empty, 0);
@@ -161,20 +178,48 @@ std::string MyFileHandler::getCodeFromFilename()
 
 void MyFileHandler::checkCommandlineArgs(int argc, char * argv[])
 {
-	//char* inFilename;
+	//char* inFilename/inFolername;
 	//char* outFilename;
-	//char* inFolderPath; // used for reading the code from the filenames
+	//char* hex/bin; // used for reading or writing the code in the filenames
+	//char* zerobytes // used to signal that program will be loaded from the zerobyte files in the folder
 
-	//TODO: Add support for debug mode option and option for reading code from filenames
+	//DONE: Add support for debug mode option and option for reading code from filenames
+	// [inFoldername][outFilename][hex / bin][zerobytes]
 
-	if (argc < 3 || argc > 4) {
-		throw std::runtime_error("Wrong number of input arguments!SuportedFormats: [inFilename] [outFilename] {this one is optional}[inFolderPath]\n");
+	if (argc < 3 || argc > 5) {
+		throw std::runtime_error("Wrong number of input arguments!SuportedFormats: [inFoldername][outFilename] optional:[hex / bin] optional:[zerobytes]\n");
 	}
 	inFilePath = argv[1];
-	outFilePath = argv[2];
-	if (argc == 4)
+	if (argc != 5)
 	{
-		inFolderPath = argv[3];
+		std::regex regExp("^.*\.(mavn)$"); // filename has to end with .mavn
+		if (!std::regex_match(inFilePath, regExp)) {
+			throw std::runtime_error("Incorrect file extension (It has to be .mavn file): " + inFilePath);
+		}
+	}
+	outFilePath = argv[2];
+	if (argc >= 4)
+	{
+		if (std::string(argv[3]) == "hex")
+		{
+			zb_type = __HEX__;
+		}
+		else if (std::string(argv[3]) == "bin")
+		{
+			zb_type = __BIN__;
+		}
+		else
+		{
+			throw std::runtime_error("Wrong type of file specified. Choose either hex or bin: [inFilename] [outFilename] [\"hex\" / \"bin\"][\"zerobytes\"]\n");
+		}
+	}
+	if (argc == 5)
+	{
+		inFolderPath = argv[1];
+		if (std::string(argv[4]) != "zerobytes")
+		{
+			throw std::runtime_error("Wrong parameter specified. Enter zerobytes to load from folder: [inFilename] [outFilename] [\"hex\" / \"bin\"][\"zerobytes\"]\n");
+		}
 	}
 }
 

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <io.h>
 #include "Constants.h"
+#include <regex>
 
 /*
 * Vector of filename strings. It is used for reading the program code from filenames in the folder
@@ -61,10 +62,19 @@ public:
 	*/
 	Filenames get_filenames(Path path);
 
+	/*
+	* Tries to make a zerobytes program that stores all of the .mavn code into the name of the files.
+	* Name of those files start with id number and are followed by _ and then data in either bin or hex format
+	* There can be multiple files created for one program.
+	* Because of that files generated from one program are placed inside one folder
+	* Default folder is: ../temp/zeroBytesProgram/
+	*/
 	void makeZeroBytesProgram();
 
 	/*
 	* Combines the code in the filenames into one string
+	* it stores the resulting program inside the temporary file:
+	* ../temp/loadedZeroBytesProgram.txt
 	* @param vector of filename strings
 	* @returns single string representation of the program
 	*/
@@ -77,10 +87,16 @@ public:
 	std::string getCodeFromFilename();
 
 	/*
-	* Checks if there are 3 or 4 command line arguments
+	* Checks if there are 3,4 or 5 command line arguments and if they are valid
+	* Valid arguments are:
+	*	[inFilename.mavn] [outFilename]  for reading the program from the .mavn file and outputing MIPS code
+	*	[inFilename.mavn] [outFilename] [hex/bin] same as above, but also creates temporary zerobytes program in temp directory
+	*	[inFoldername] [outFilename] [hex/bin] [zerobytes] loads the MAVN program from the zerobytes hex/binary file names in the folder
+	*		and creates the MIPS output file.
 	* @param number of arguments 
 	* @param value of the arguments
 	* @throws runtime_error if the number of arguments is incorrect
+		or if the individual arguments are not correct
 	*/
 	void checkCommandlineArgs(int argc, char* argv[]);
 
@@ -90,6 +106,12 @@ public:
 	std::string getInFilepath();
 
 private:
+	/*
+	* Type of data that is stored in zerobytes program
+	* If it is hexadecimal file then the value should be 1
+	* For binary file value should be 0
+	*/
+	int zb_type;
 
 	/*
 	* Size of the id number of zerobytes files

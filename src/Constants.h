@@ -50,4 +50,14 @@ const int RIGHT_ALIGN = 25;
 */
 const int ZB_ID_SIZE = 10;
 
+/**
+* Value that signals that hexadecimal code will be used in zeroBytes program
+*/
+const int __HEX__ = 1;
+
+/**
+* Value that signals that binary code will be used in zeroBytes program
+*/
+const int __BIN__ = 0;
+
 #endif

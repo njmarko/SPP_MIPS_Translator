@@ -48,15 +48,19 @@ using namespace std;
 	syscall
 */
 
+/*
+* Program arguments ( '/' is used to symbolize choice between possible values):
+*	[inFilename.mavn] [outFilename]  for reading the program from the .mavn file and outputing MIPS code
+*	[inFilename.mavn] [outFilename] [hex/bin] same as above, but also creates temporary zerobytes program in temp directory
+*	[inFoldername] [outFilename] [hex/bin] [zerobytes] loads the MAVN program from the zerobytes hex/binary file names in the folder
+*		and creates the MIPS output file.
+*/
 int main(int argc, char* argv[])
 {
 	try
 	{
 
-		MyFileHandler fileHandler(argc,argv);
-
-		//fileHandler.makeZeroBytesProgram();
-
+		MyFileHandler fileHandler(argc, argv);
 
 		bool retVal = false;
 
@@ -65,16 +69,14 @@ int main(int argc, char* argv[])
 		LivenessAnalysis livenessAnalysis;
 		ResourceAllocation resourceAllocation;
 		
-		if (argc == 3)
+		if (argc == 3 || argc == 4)
 		{
 			if (!lex.readInputFile(fileHandler.getInFilepath()))
 				throw runtime_error("\nException! Failed to open input file!\n");
 		}
-		else if (argc == 4) {
-			if (!lex.readInputFile(fileHandler.getInFilepath())) {
-				if (!lex.readInputFileName(fileHandler.createProgramFromFilenames()))
-					throw runtime_error("\nException! Failed to open input file or folder!\n");
-			}
+		else if (argc == 5) {
+			if (!lex.readInputFileName(fileHandler.createProgramFromFilenames()))
+				throw runtime_error("\nException! Failed to open input folder!\n");
 		}
 
 
