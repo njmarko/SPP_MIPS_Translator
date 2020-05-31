@@ -230,10 +230,11 @@ std::string Instruction::convertToMIPSString()
 	{
 	case I_NO_TYPE:
 		break;
+	case I_NEG: // E → neg rid, rid
 	case I_XOR:	// E → xor rid, rid, rid
 	case I_MUL:	// E → mul rid, rid, rid
 	case I_SUB: // E → sub rid, rid, rid
-	case I_ADD: // E → add rid, rid, rids
+	case I_ADD: // E → add rid, rid, rid
 		ss << "\t" << instrTypeStr(m_type)  << "\t";
 		first = true;
 		for each (Variable* var in m_dst)
@@ -255,7 +256,7 @@ std::string Instruction::convertToMIPSString()
 		}
 		break;
 	case I_ADDI: // E → addi rid, rid, num
-		ss << "\taddi\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
 		for each (Variable* var in m_dst)
 		{
@@ -277,7 +278,7 @@ std::string Instruction::convertToMIPSString()
 		ss << ", "  << getNumValue();
 		break;
 	case I_LA: // E → la rid, mids
-		ss << "\tla\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
 		for each (Variable* var in m_dst)
 		{
@@ -298,7 +299,7 @@ std::string Instruction::convertToMIPSString()
 		}
 		break;
 	case I_LI: // E → li rid, num
-		ss << "\tli\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
 		for each (Variable* var in m_dst)
 		{
@@ -315,7 +316,7 @@ std::string Instruction::convertToMIPSString()
 		ss << " ," << getNumValue();
 		break;
 	case I_LW: // E → lw rid, num(rid)
-		ss << "\tlw\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
 		for each (Variable* var in m_dst)
 		{
@@ -334,7 +335,7 @@ std::string Instruction::convertToMIPSString()
 		break;
 	case I_SW: // E → sw rid, num(rid)
 		// SW instruction has 2 source registers and no destination registers
-		ss << "\tsw\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
 		ss << "$t" << (*(m_src.cbegin()))->getAsignment() - 1; // first source register
 		ss << ", " << getNumValue();
@@ -342,7 +343,7 @@ std::string Instruction::convertToMIPSString()
 		ss << "($t" << (*(++m_src.cbegin()))->getAsignment() - 1 << ")"; 
 		break;
 	case I_BLTZ: // E → bltz rid, id
-		ss << "\tbltz\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		first = true;
 		for each (Variable* var in m_src)
 		{
@@ -359,11 +360,11 @@ std::string Instruction::convertToMIPSString()
 		ss << ", " << getJumpLabel();
 		break;
 	case I_B: // E → b id
-		ss << "\tlw\t";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		ss << ", " << getJumpLabel();
 		break;
 	case I_NOP:
-		ss << "\tnop";
+		ss << "\t" << instrTypeStr(m_type) << "\t";
 		break;
 	default:
 		break;

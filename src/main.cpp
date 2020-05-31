@@ -14,6 +14,7 @@ using namespace std;
 /*
 * Adding new isntrucitons process:
 * Types.h				 = add the instruction type to TokenType and to the InstructionType
+* Types.cpp				 = add the instruction to to the functions that convert instructions to string
 * FiniteStateMachine.cpp = add TokenType to stateToTokenTable and add apropriate values to stateMatrix
 * Constants.h			 = increace NUM_STATES
 * Token.cpp				 = in tokenTypeToString add token type and string value

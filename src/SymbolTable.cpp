@@ -258,6 +258,22 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		ins->fillDefVariables();
 		ins->fillUseVariables();
 		break;
+	case I_NEG: // E → neg rid, rid
+		if ((v = isRegVarDefined(*cit_params)) == nullptr)
+		{
+			throw std::runtime_error(makeInstructionErrorMsg(0, Variable::REG_VAR, i_type, *cit_params));
+		}
+		dst.push_back(v);
+		if ((v = isRegVarDefined(*(++cit_params))) == nullptr)
+		{
+			throw std::runtime_error(makeInstructionErrorMsg(1, Variable::REG_VAR, i_type, *cit_params));
+		}
+		src.push_back(v);
+		// Increments the instruction counter whenever an instruction is created
+		ins = new Instruction(instrCount++, i_type, dst, src, getParentLabel());
+		ins->fillDefVariables();
+		ins->fillUseVariables();
+		break;
 	case I_LA: // E → la rid, mid
 		if ((v = isRegVarDefined(*cit_params)) == nullptr)
 		{

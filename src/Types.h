@@ -72,6 +72,7 @@ enum InstructionType
 	I_NOP,
 	I_MUL,
 	I_XOR,
+	I_NEG,
 };
 
 /*

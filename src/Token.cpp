@@ -103,6 +103,7 @@ string Token::tokenTypeToString(TokenType t)
 		case T_ERROR:			return "[T_ERROR]";
 		case T_MUL:				return "[T_MUL]";
 		case T_XOR:				return "[T_XOR]";
+		case T_NEG:				return "[T_NEG]";
 		default:				return "";
 	}
 }

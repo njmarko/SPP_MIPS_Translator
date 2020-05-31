@@ -19,11 +19,11 @@ _func main;
 	li		r5, 1;
 	li		r6, 0;
 lab:
-	sub		r6, r6, r2;
+	add		r6, r6, r2;
 	sub		r7, r5, r4;
 	addi	r5, r5, 1;
 	bltz	r7, lab;
-	
+	neg		r6, r6;	
 	la		r8, m3;
 	sw		r6, 0(r8);
 	nop;
