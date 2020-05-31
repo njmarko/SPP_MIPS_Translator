@@ -49,9 +49,12 @@ class ResourceAllocation :public Visitor {
 
 
 	/*
-	* Decomposes the instructions that constain the variable that is being replaced 
-	* and that use 3 different registers into 3 instructions that use at most 2 registers each
-	* Example: add r1,r2,r3 is decomposed int xor r1,r1,r1; add r1,r1,r2; add r1,r1,r3;
+	* Decomposes the instructions that contain the variable that is being replaced 
+	* example: Instruction sub r1,r2,r3 can be decomposed into
+	* neg r1,r3; add r1,r1,r2;
+	* And if the register r2 can be replaced with immediate value then the resulting instructions are
+	* neg r1,r3; addi r1,r1,immediate_val
+	* That reduces the number of live variables.
 	* @param reference to a list of instruction pointers
 	* @param pointer to a variable that is being spilled
 	*/
@@ -60,8 +63,8 @@ class ResourceAllocation :public Visitor {
 	/*
 	* Checks if the memory variables value is changed in the program
 	* and if the value is not changed (no la and sw instruction combination that writes to it)
-	* then it tries to replace la and lw instructions with li instruction and last source parameter
-	* in some instruction with immediate value (example: add instruction is changed into addi)
+	* then it tries to replace lw instructions with li instruction and also tries to replace one source parameter
+	* in some instructions with immediate value (example: add instruction is changed into addi)
 	* @param reference to a list of instruction pointers
 	* @param reference to a list of memory variables
 	*/

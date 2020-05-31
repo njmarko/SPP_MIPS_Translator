@@ -38,6 +38,7 @@ enum TokenType
 	T_NOP,			// nop
 	T_MUL,			// mul
 	T_XOR,			// xor
+	T_NEG,			// neg
 
 	// operators
 	T_COMMA,		//,

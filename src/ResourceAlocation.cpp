@@ -271,105 +271,131 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				/*	xor r1, r1, r1
 				*	add r1, r1, r2
 				*	add r1, r1, r3
+				*
+				* This procedure would actually not help the program with reducing registers
+				* because if there is an register r4 that is live at the current instruction
+				* that would mean that r2,r3 and r4 are live in add r1,r2,r3
+				* and decomposing the add instruction to the 3 instructions wouldn't change much
+				* because liveness would look like this:
+				*	xor r1,r1,r1 = live r1,r4
+				*	add r1,r1,r2 = live r1,r2,r4
+				*	add r1,r1,r3 = live r1,r3,r4
+				* So two of those instructions still have 3 variables that are live
 				*/
-				// xor r1, r1, r1
-				dst_list = (*cit)->getDst();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getDst().front());
-				i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i1->fillDefVariables();
-				i1->fillUseVariables();
 
-				//add r1, r1, r2
-				src_list.clear();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getSrc().front());
-				i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i2->fillDefVariables();
-				i2->fillUseVariables();
+				//// xor r1, r1, r1
+				//dst_list = (*cit)->getDst();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getDst().front());
+				//i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i1->fillDefVariables();
+				//i1->fillUseVariables();
 
-				//add r1, r1, r2
-				src_list.clear();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getSrc().back());
-				i3 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i3->fillDefVariables();
-				i3->fillUseVariables();
+				////add r1, r1, r2
+				//src_list.clear();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getSrc().front());
+				//i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i2->fillDefVariables();
+				//i2->fillUseVariables();
 
-				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				////add r1, r1, r2
+				//src_list.clear();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getSrc().back());
+				//i3 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i3->fillDefVariables();
+				//i3->fillUseVariables();
+
+				//instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//deleted.push_back(*cit); // queue the replaced instruction for deletion
 				break;
 			case I_SUB: // sub r1, r2, r3
 				/*
 				*	xor r1, r1, r1
 				*	add r1, r1, r2
-				*	sub r1, r1, r3			
+				*	sub r1, r1, r3		
+				* Decomposition above would not help (see add example) with the problem of reducing the live variables
+				*
+				* On the other hand this decomposition below might help if the add can be transformed into addi
+				*	neg r1,r3
+				*	add r1,r1,r2
+				* Lest assume that r4 is live at the sub instruction. That means that r2,r3 and r4 are live at the same time.
+				* If the sub instruction is replaced with neg and addi instructions then liveness looks like this
+				*	neg r1,r3 = live r3,r4
+				*   addi r1,r1,(value that r2 was holding) = live r1,r4
+				* In this case only 2 variables are live at each instruction that replaced sub instruction!
 				*/
-				// xor r1, r1, r1
-				dst_list = (*cit)->getDst();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getDst().front());
-				i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i1->fillDefVariables();
-				i1->fillUseVariables();
 
-				// add r1, r1, r2
-				src_list.clear();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getSrc().front());
-				i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i2->fillDefVariables();
-				i2->fillUseVariables();
+				//// xor r1, r1, r1
+				//dst_list = (*cit)->getDst();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getDst().front());
+				//i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i1->fillDefVariables();
+				//i1->fillUseVariables();
 
-				// sub r1, r1, r3	
-				src_list.clear();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getSrc().back());
-				i3 = new Instruction((*cit)->getPos(), InstructionType::I_SUB, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i3->fillDefVariables();
-				i3->fillUseVariables();
+				//// add r1, r1, r2
+				//src_list.clear();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getSrc().front());
+				//i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i2->fillDefVariables();
+				//i2->fillUseVariables();
 
-				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				//// sub r1, r1, r3	
+				//src_list.clear();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getSrc().back());
+				//i3 = new Instruction((*cit)->getPos(), InstructionType::I_SUB, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i3->fillDefVariables();
+				//i3->fillUseVariables();
+
+				//instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//deleted.push_back(*cit); // queue the replaced instruction for deletion
 				break;
 			case I_XOR: // xor r1,r2,r3
 				/*
 				*	xor r1,r1,r1
 				*	xor r1,r1,r2
 				*	xor r1,r1,r3
+				*
+				* This decomposition doesn't reduce number of live varaibles (see add and sub instructions)
+				* One solution for reducing would be to replace xor with xori in moveFromMemToImmediate function if possible
 				*/
-				// xor r1,r1,r1
-				dst_list = (*cit)->getDst();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getDst().front());
-				i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i1->fillDefVariables();
-				i1->fillUseVariables();
 
-				// xor r1,r1,r2
-				src_list.clear();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getSrc().front());
-				i2 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i2->fillDefVariables();
-				i2->fillUseVariables();
+				//// xor r1,r1,r1
+				//dst_list = (*cit)->getDst();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getDst().front());
+				//i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i1->fillDefVariables();
+				//i1->fillUseVariables();
 
-				// xor r1,r1,r3
-				src_list.clear();
-				src_list.push_back((*cit)->getDst().front());
-				src_list.push_back((*cit)->getSrc().back());
-				i3 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				i3->fillDefVariables();
-				i3->fillUseVariables();
+				//// xor r1,r1,r2
+				//src_list.clear();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getSrc().front());
+				//i2 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i2->fillDefVariables();
+				//i2->fillUseVariables();
 
-				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				//// xor r1,r1,r3
+				//src_list.clear();
+				//src_list.push_back((*cit)->getDst().front());
+				//src_list.push_back((*cit)->getSrc().back());
+				//i3 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				//i3->fillDefVariables();
+				//i3->fillUseVariables();
+
+				//instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
+				//deleted.push_back(*cit); // queue the replaced instruction for deletion
 				break;
 			default:
 				break;
@@ -387,8 +413,10 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 					*	add r1, r1, r2
 					* and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
 					*	addi r1, r1, (value at the mem location)
+					*
+					* This doesn't reduce number of live variables (see add,sub,xor descriptions)
 					*/
-				//TODO: make decomposition for addi instruction if i decide to go for the code that uses only 1 register
+				
 				break;
 			default:
 				break;
@@ -411,10 +439,42 @@ void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables 
 {
 	// if the instruction for storing has an offset then this program will not try to 
 	// evaluate any further and no moving from memory to immediate will happen
-	for each (Instruction* var in instr)
+	Variables a_regs;
+	for each (Instruction* i_var in instr)
 	{
-		if (var->getType() == InstructionType::I_SW && var->getNumValue() != 0) {
-			return;
+		if (i_var->getDst().size() > 0 && find(a_regs.cbegin(), a_regs.cend(), i_var->getDst().front()) != a_regs.cend())
+		{
+			// if the register that holds the adress is being redefined, remove it from the list of address registers
+			a_regs.remove(i_var->getDst().front());
+		}
+		if (i_var->getType() == InstructionType::I_LA)
+		{
+			// keep track of all the registers that hold memory addresses
+			a_regs.push_back(i_var->getDst().front());
+		}
+
+		if (i_var->getType() == InstructionType::I_SW) {
+			/*
+			* if offset is used, this heuristic with replacing mem values with immedaite operands
+			* can potentialy not work so it is aborted.
+			* This is because it is hard to keep track what mem location is only being read from
+			*/
+			if (i_var->getNumValue() != 0)
+			{
+				return;
+			}
+			/*
+			* For this heuristic to keep track of memory locations that are used for reading only
+			* memory address has to be loaded into register, and that register cannot be changed
+			* before it is used in the sw instruction.
+			* If sw instruction uses a register that doesn't contain an unchanged address loaded by la
+			* then this procedure is aborted.
+			* 
+			*/
+			if (find(a_regs.cbegin(), a_regs.cend(),i_var->getSrc().back()) == a_regs.cend())
+			{
+				return;
+			}
 		}
 	}
 

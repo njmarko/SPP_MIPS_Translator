@@ -13,9 +13,9 @@ using namespace std;
 
 /*
 * Adding new isntrucitons process:
-* Constants.h			 = increace NUM_STATES
 * Types.h				 = add the instruction type to TokenType and to the InstructionType
 * FiniteStateMachine.cpp = add TokenType to stateToTokenTable and add apropriate values to stateMatrix
+* Constants.h			 = increace NUM_STATES
 * Token.cpp				 = in tokenTypeToString add token type and string value
 * Expand the grammar	 = for instructions add it to nonterminal symbol E
 * SyntaxAnalysis.cpp     = in E function add token type T_ according to gramar and call makeInstruction function
