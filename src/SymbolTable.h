@@ -1,3 +1,7 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
 #pragma once
 
 #include "IR.h"
@@ -16,6 +20,9 @@ class SymbolTable;
 /**
 * Absract class that is used for implementing Visitor pattern
 * It forces the class to inherit the accept method that must be redefined
+* It allows the host to call visith method of the visiting class, and that
+* method can call private functions of the visiting class but still operate on the data
+* their 
 */
 class ProgramData {
 public:
@@ -29,6 +36,8 @@ public:
 /**
 * Absract class that is used for implementing Visitor pattern
 * It forces the class to inherit the visit method that must be redefined
+* Interesting thing is that all methods can then be private except for the visit method
+* because they can be called inside the visit method by the class themselves
 */
 class Visitor {
 public:

@@ -1,4 +1,8 @@
-﻿#include "IR.h"
+﻿/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
+#include "IR.h"
 
 void Variable::printFullInfo()
 {
@@ -221,8 +225,8 @@ void Instruction::fillUseVariables()
 
 std::string Instruction::convertToMIPSString()
 {
-	// TODO: Group the output cases together and just type the name of the instruction based on type
-	// TODO: Add instruction type to string method to support the request above
+	// DONE: Group the output cases together and just type the name of the instruction based on type
+	// DONE: Add instruction type to string method to support the request above
 
 	std::stringstream ss; // string stream used to build MIPS instructions
 	bool first;

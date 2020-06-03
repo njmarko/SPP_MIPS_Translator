@@ -1,3 +1,7 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
 #pragma once
 #include "SymbolTable.h"
 #include "IR.h"
@@ -17,7 +21,7 @@ struct NoMoreSpillsPossible :public std::runtime_error {
 	* Constructor with a message that will be displayed
 	* @param message that will be displayed
 	*/
-	NoMoreSpillsPossible(const char* message) :runtime_error(message) {};
+	NoMoreSpillsPossible(const char* message);
 };
 
 /**
@@ -25,14 +29,14 @@ struct NoMoreSpillsPossible :public std::runtime_error {
 * There are four phases to resource allocation:
 * Build, Simplify, Spill and Select
 */
-class ResourceAllocation :public Visitor {
-
+class ResourceAllocation : public Visitor {
+public:
 	/**
 	* Visitor class has pure virtual function visit that has to be implemented.
 	* Function visit is called by the class that this Visitor visits
 	* @param symTab class that is being visited
 	*/
-	void visit(SymbolTable& symTab)override;
+	void visit(SymbolTable& symTab) override;
 
 	/**
 	* Funcion that is activated when the spill happens. 

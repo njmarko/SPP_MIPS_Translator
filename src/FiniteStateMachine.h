@@ -1,3 +1,7 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
 #ifndef __FINITE_STATE_MACHINE__
 #define __FINITE_STATE_MACHINE__
 
@@ -12,24 +16,24 @@ typedef std::map<int, std::map<char,int>> StateMachine;
 class FiniteStateMachine
 {
 public:
-	/***
+	/**
 	 * Returns the next state number, based on current state and transition letter
 	 */
 	int getNextState(int currentState, char transitionLetter);
 
-	/***
+	/**
 	 * Call this function to initialize FSM.
 	 * This function must be called before getNextLexToken function.
 	 */
 	void initStateMachine();
 
-	/***
+	/**
 	 * Get token type from the number of the state
 	 */
 	static TokenType getTokenType(int stateNumber);
 
 private:
-	/***
+	/**
 	 * State machine map, containing possible FSM states and transition matrix as an inner map
 	 *		map<StateNumber, map<TransitionCharacter, NextStateNumber>>
 	 * map1 key:		state number
@@ -38,17 +42,17 @@ private:
 	 */
 	StateMachine stateMachine;
 
-	/***
+	/**
 	 * Table used for mapping states to tokens
 	 */
 	static const TokenType stateToTokenTable[NUM_STATES];
 
-	/***
+	/**
 	 * Array contaning supported characters
 	 */
 	static const char supportedCharacters[NUM_OF_CHARACTERS];
 
-	/***
+	/**
 	 * State transition matrix:
 	 *	Rows represent current state and columns the next state
 	 *	Transition characters (symbols) for each transition are defined with supportedCharacters array

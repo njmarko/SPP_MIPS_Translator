@@ -1,3 +1,7 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
 #ifndef __TYPES__
 #define __TYPES__
 
@@ -9,7 +13,7 @@
 #include <vector>
 #include <stack>
 
-/***
+/**
 * Supported token types.
 */
 enum TokenType
@@ -51,15 +55,16 @@ enum TokenType
 	// utility
 	T_COMMENT,
 	T_END_OF_FILE,
-	T_ERROR,
+	T_ERROR
 };
 
 
-/***
+/**
  * Instruction type.
  */
 enum InstructionType
 {
+	/// For instructions that have no type
 	I_NO_TYPE = 0,
 	I_ADD,
 	I_ADDI,
@@ -74,7 +79,7 @@ enum InstructionType
 	I_MUL,
 	I_XOR,
 	I_NEG,
-	I_BGEZ,
+	I_BGEZ
 };
 
 /**
@@ -92,7 +97,7 @@ std::string instrTypeToWholeInstrStr(InstructionType type);
 */
 std::string instrTypeStr(InstructionType type);
 
-/***
+/**
  * Reg names. Mips has 32 registers
  */
 enum Regs

@@ -1,4 +1,8 @@
-﻿#include "SymbolTable.h"
+﻿/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
+#include "SymbolTable.h"
 
 
 

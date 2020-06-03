@@ -1,3 +1,8 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
+
 #include <iostream>
 #include <exception>
 
@@ -56,6 +61,7 @@ using namespace std;
 * 4. use word throws or throw
 * 5. in param first type name of the parameter
 * 6. use three backslashes if you want what you write to appear next to class in docs
+* 7. only public and protected members are documented. everything private is exlcuded. Make sure public is used.
 */
 
 

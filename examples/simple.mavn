@@ -7,7 +7,6 @@ _reg r3;
 _reg r4;
 _reg r5;
 
-_func main; 
 	la		r4,m1;
 	lw		r1, 0(r4);
 	la		r5, m2;

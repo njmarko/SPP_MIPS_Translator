@@ -1,3 +1,7 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
 #pragma once
 
 #include "Token.h"
@@ -88,7 +92,5 @@ private:
 	* @param t type of token that current token is expected to be
 	*/
 	void eat(TokenType t);
-
-
 
 };

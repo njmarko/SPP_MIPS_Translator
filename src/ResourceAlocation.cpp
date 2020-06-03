@@ -1,4 +1,8 @@
-﻿#include "ResourceAlocation.h"
+﻿/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
+#include "ResourceAlocation.h"
 
 void ResourceAllocation::visit(SymbolTable & symTab)
 {
@@ -20,7 +24,7 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 
 void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig, Variables & spilled_vars)
 {
-	//TODO: add r1,r2,r3 can be replaced with three instrucitons
+	//DONE: add r1,r2,r3 can be replaced with three instrucitons
 
 	/** 
 	*	xor r1,r1,r1
@@ -53,7 +57,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 
 	//DONE: add a structure that stores all the registers that were already spilled to memory
 
-	//TODO: add optimisation that replaces ADD r1,r2,r3 type instructions with ADDI instructions
+	//DONE: add optimisation that replaces ADD r1,r2,r3 type instructions with ADDI instructions
 	/**
 	* first a procedure should be performed that replaces add r1,r2,r3 with three instructions, xor,add,add
 	* then it should be checked if the source register that is used is not the destination register that is being defined
@@ -78,7 +82,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	
 	if (replacedVar == nullptr)
 	{
-		// TODO: decide how to handle the case when all the variables are already spilled
+		// DONE: decide how to handle the case when all the variables are already spilled
 		throw NoMoreSpillsPossible("No more spilling is possible because all the variables are already spilled!");
 	}
 	/**
@@ -158,7 +162,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		// after that check for definitions of the selected regVar
 		if ((*cit)->checkVarInDef(*replacedVar))
 		{
-			//TODO: check if the variable that is being defined is being used anywhere. If not, it is not neccesary to store it in memory
+			//DONE: check if the variable that is being defined is being used anywhere. If not, it is not neccesary to store it in memory
 
 			// if the regVar is defined, then the result has to be stored in memory
 
@@ -286,7 +290,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				*/
 
 				/*
-				// xor r1, r1, r1
+				 xor r1, r1, r1
 				dst_list = (*cit)->getDst();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getDst().front());
@@ -294,7 +298,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i1->fillDefVariables();
 				i1->fillUseVariables();
 
-				//add r1, r1, r2
+				add r1, r1, r2
 				src_list.clear();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getSrc().front());
@@ -302,7 +306,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i2->fillDefVariables();
 				i2->fillUseVariables();
 
-				//add r1, r1, r2
+				add r1, r1, r2
 				src_list.clear();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getSrc().back());
@@ -310,10 +314,10 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i3->fillDefVariables();
 				i3->fillUseVariables();
 
-				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				instr.insert(cit, i1);  inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2);  inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i3);  inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit);  queue the replaced instruction for deletion
 				*/
 				break;
 			case I_SUB: // sub r1, r2, r3
@@ -352,7 +356,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				deleted.push_back(*cit); // queue the replaced instruction for deletion
 
 				/*
-				// xor r1, r1, r1
+				 xor r1, r1, r1
 				dst_list = (*cit)->getDst();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getDst().front());
@@ -360,7 +364,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i1->fillDefVariables();
 				i1->fillUseVariables();
 
-				// add r1, r1, r2
+				 add r1, r1, r2
 				src_list.clear();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getSrc().front());
@@ -368,7 +372,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i2->fillDefVariables();
 				i2->fillUseVariables();
 
-				// sub r1, r1, r3	
+				 sub r1, r1, r3	
 				src_list.clear();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getSrc().back());
@@ -376,10 +380,10 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i3->fillDefVariables();
 				i3->fillUseVariables();
 
-				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				instr.insert(cit, i1);  inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2);  inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i3);  inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit);  queue the replaced instruction for deletion
 				*/
 				break;
 			case I_XOR: // xor r1,r2,r3
@@ -393,7 +397,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				*/
 
 				/*
-				// xor r1,r1,r1
+				 xor r1,r1,r1
 				dst_list = (*cit)->getDst();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getDst().front());
@@ -401,7 +405,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i1->fillDefVariables();
 				i1->fillUseVariables();
 
-				// xor r1,r1,r2
+				 xor r1,r1,r2
 				src_list.clear();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getSrc().front());
@@ -409,7 +413,7 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i2->fillDefVariables();
 				i2->fillUseVariables();
 
-				// xor r1,r1,r3
+				 xor r1,r1,r3
 				src_list.clear();
 				src_list.push_back((*cit)->getDst().front());
 				src_list.push_back((*cit)->getSrc().back());
@@ -417,10 +421,10 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				i3->fillDefVariables();
 				i3->fillUseVariables();
 
-				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				instr.insert(cit, i1);  inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2);  inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i3);  inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit);  queue the replaced instruction for deletion
 				*/
 				break;
 			default:
@@ -428,21 +432,21 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 			}
 		}
 		/*
-		// this if is for addi instruction
+		 this if is for addi instruction
 		else if (unique_vars.size() == 2 && std::find(unique_vars.cbegin(), unique_vars.cend(), replaced_var) != unique_vars.cend())
 		{
 			switch ((*cit)->getType())
 			{
-			case I_ADDI: // addi r1, r2, number
+			case I_ADDI:  addi r1, r2, number
 					
-					//	xor r1, r1, r1
-					//	addi r1, r1, 5
-					//	add r1, r1, r2
-					// and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
-					//	addi r1, r1, (value at the mem location)
-					//
-					// This doesn't reduce number of live variables (see add,sub,xor descriptions)
-					//
+						xor r1, r1, r1
+						addi r1, r1, 5
+						add r1, r1, r2
+					 and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
+						addi r1, r1, (value at the mem location)
+					
+					 This doesn't reduce number of live variables (see add,sub,xor descriptions)
+					
 				
 				break;
 			default:
@@ -821,4 +825,8 @@ void ResourceAllocation::selectRegisters(InterferenceGraph & ig, SimplificationS
 			v->set_assignment(Regs(color));
 		}
 	}
+}
+
+NoMoreSpillsPossible::NoMoreSpillsPossible(const char * message):runtime_error(message)
+{
 }

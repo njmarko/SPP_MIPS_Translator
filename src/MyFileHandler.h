@@ -1,3 +1,7 @@
+/*
+*	Author: Marko Njegomir sw-38-2018
+*	Project: MAVN: Translates higher level 32bit MIPS assembly code into low level MIPS assembly code
+*/
 #pragma once
 #include <experimental/filesystem> // http://en.cppreference.com/w/cpp/experimental/fs
 #include <vector>
