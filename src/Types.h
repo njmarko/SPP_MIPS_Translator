@@ -9,7 +9,7 @@
 #include <vector>
 #include <stack>
 
-/**
+/***
 * Supported token types.
 */
 enum TokenType
@@ -55,7 +55,7 @@ enum TokenType
 };
 
 
-/**
+/***
  * Instruction type.
  */
 enum InstructionType
@@ -77,22 +77,22 @@ enum InstructionType
 	I_BGEZ,
 };
 
-/*
+/**
 * Converts enum instruction type to the string
 * that represents the whole instruction format
-* @param instruction type
+* @param type instruction type
 * @returns string representation of the whole instruction type
 */
 std::string instrTypeToWholeInstrStr(InstructionType type);
 
-/*
+/**
 * Converts enum instruction type to string
-* @param instruction type
+* @param type instruction type
 * @returns string with the name of the type
 */
 std::string instrTypeStr(InstructionType type);
 
-/**
+/***
  * Reg names. Mips has 32 registers
  */
 enum Regs

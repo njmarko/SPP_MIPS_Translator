@@ -38,14 +38,14 @@ public:
 	/**
 	 * Use this function to get next lexical token from program source code.
 	 *
-	 * @return next lexical token in program source code
+	 * @returns next lexical token in program source code
 	 */
 	Token getNextTokenLex();
 
 	/**
 	 * Use this function to get the list of tokens read from the source code
 	 *
-	 * @return list of tokens
+	 * @returns list of tokens
 	 */
 	TokenList& getTokenList();
 

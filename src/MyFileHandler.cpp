@@ -108,7 +108,7 @@ void MyFileHandler::makeZeroBytesProgram()
 	std::experimental::filesystem::create_directory("../temp/zeroBytesProgram/");
 	std::stringstream stream;
 	char d;
-	std::string s; /*= std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";*/
+	std::string s; /**= std::string(id_size - std::to_string(zbfile_id_cnt).length(), '0') + std::to_string(zbfile_id_cnt) + "_";*/
 	std::string empty = "";
 	std::string temp = "";
 	while (in >> std::noskipws >> d) {

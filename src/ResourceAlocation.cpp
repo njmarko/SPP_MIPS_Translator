@@ -21,7 +21,8 @@ void ResourceAllocation::visit(SymbolTable & symTab)
 void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, Variables & m_vars, Labels & labels, InterferenceGraph& ig, Variables & spilled_vars)
 {
 	//TODO: add r1,r2,r3 can be replaced with three instrucitons
-	/* 
+
+	/** 
 	*	xor r1,r1,r1
 	*	add r1,r1,r2
 	*	add r1,r1,r3
@@ -48,12 +49,12 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	* and if the value stored in m1 can fit in 16 bits with the instruction
 	*	li r2,(num value from m1)
 	*
-	/*
+	*/
 
 	//DONE: add a structure that stores all the registers that were already spilled to memory
 
 	//TODO: add optimisation that replaces ADD r1,r2,r3 type instructions with ADDI instructions
-	/*
+	/**
 	* first a procedure should be performed that replaces add r1,r2,r3 with three instructions, xor,add,add
 	* then it should be checked if the source register that is used is not the destination register that is being defined
 	* if it is not it should be checked if the register that is used is smaller than the size of immediate operand (addi instr)
@@ -80,14 +81,14 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		// TODO: decide how to handle the case when all the variables are already spilled
 		throw NoMoreSpillsPossible("No more spilling is possible because all the variables are already spilled!");
 	}
-	/*
+	/**
 	* Replace instructions where the spilled variable appears with the appropriate set of instructions
 	* if the conditions for the instruction replacement are satisfied 
 	* (example: replace sub instruction only if it uses 2 different registers
 	*/
 	decomposeInstructions(instr, replacedVar);
 
-	/*
+	/**
 	* Check if the memory variable is being used for reading only, and if it is
 	* check if it can be transformed into the immediate operand
 	*/
@@ -99,7 +100,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	memList.push_back(mem_var);
 	m_vars.push_back(mem_var); // added to the list of all mem variables used in the code that is in symTable
 
-	/*
+	/**
 	* Before every instruction that uses the selected regVar, we need to add 2 instructions intended
 	* for loading the instruction from memory to the selected register variable.
 	* Also for every instruction that defines the selected register variable, we need to 
@@ -117,7 +118,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 		{
 			// if the regVar is used, then the regvar has to be loaded from the memory
 
-			/*
+			/**
 			* real position will be calculated after all the instructions are added
 			* type of instruction is load address E → la rid, mid
 			* destination is a new registerVariable (we assume there are infinite ammount of them)
@@ -134,7 +135,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			la->fillDefVariables(); // la instruction only fills the def set
 			instr.insert(cit, la); // inserts the new instruction before the chosen instruction pointed by the iterator
 
-			/*
+			/**
 			* real position will be calculated after all the instructions are added
 			* type of instruction is load word E → lw rid, num(rid)
 			* destination is a the register that was selected to be spilled into memory
@@ -165,7 +166,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			Instructions::const_iterator after(cit);
 			++after;
 
-			/*
+			/**
 			* real position will be calculated after all the instructions are added
 			* type of instruction is load address E → la rid, mid
 			* destination is a new registerVariable (we assume there are infinite ammount of them)
@@ -182,7 +183,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			la->fillDefVariables(); // la instruction only fills the def set
 			instr.insert(after, la); // inserts the new instruction before the next pointed by the after iterator
 
-			/*
+			/**
 			* real position will be calculated after all the instructions are added
 			* type of instruction is load word E → sw rid, num(rid)
 			* source1 is the register that was selected to be moved into memory and was defined in the current instruction
@@ -205,14 +206,14 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 			++cit;
 		}
 	}
-	/*
+	/**
 	* Next add the replaced variable to the list of spilled variables. It was aded here after the other variables that were added
 	* in the process of spilling because of the easier error printing because it needs to show the variable that was chosen for the spill
 	*/
 	spilled_vars.push_back(replacedVar);
 
 
-	/*
+	/**
 	* Next step is to go trough all the instructions and choose the new position numbers for them.
 	* At the same time update the list of labels, so the labels now hold the correct position of the
 	* first instruction that belongs to them
@@ -238,7 +239,7 @@ void ResourceAllocation::handleSpill(Instructions & instr, Variables & r_vars, V
 	}
 
 
-	/*
+	/**
 	* Reset of some data is needed because connecting instructions, liveness analysis and register allocation has to be performed again.
 	* This reset is done at the start of the connectInstructions function in the SymbolTable where all the data is located
 	* because this algoritham jumps back to connectInstructions after the spill happens
@@ -268,7 +269,8 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 			switch ((*cit)->getType())
 			{
 			case I_ADD: // add r1, r2, r3
-				/*	xor r1, r1, r1
+				/**	
+				*   xor r1, r1, r1
 				*	add r1, r1, r2
 				*	add r1, r1, r3
 				*
@@ -283,37 +285,39 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				* So two of those instructions still have 3 variables that are live
 				*/
 
-				//// xor r1, r1, r1
-				//dst_list = (*cit)->getDst();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getDst().front());
-				//i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i1->fillDefVariables();
-				//i1->fillUseVariables();
+				/*
+				// xor r1, r1, r1
+				dst_list = (*cit)->getDst();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getDst().front());
+				i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i1->fillDefVariables();
+				i1->fillUseVariables();
 
-				////add r1, r1, r2
-				//src_list.clear();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getSrc().front());
-				//i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i2->fillDefVariables();
-				//i2->fillUseVariables();
+				//add r1, r1, r2
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().front());
+				i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i2->fillDefVariables();
+				i2->fillUseVariables();
 
-				////add r1, r1, r2
-				//src_list.clear();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getSrc().back());
-				//i3 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i3->fillDefVariables();
-				//i3->fillUseVariables();
+				//add r1, r1, r2
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().back());
+				i3 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i3->fillDefVariables();
+				i3->fillUseVariables();
 
-				//instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//deleted.push_back(*cit); // queue the replaced instruction for deletion
+				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				*/
 				break;
 			case I_SUB: // sub r1, r2, r3
-				/*
+				/**
 				*	xor r1, r1, r1
 				*	add r1, r1, r2
 				*	sub r1, r1, r3		
@@ -347,37 +351,39 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
 				deleted.push_back(*cit); // queue the replaced instruction for deletion
 
-				//// xor r1, r1, r1
-				//dst_list = (*cit)->getDst();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getDst().front());
-				//i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i1->fillDefVariables();
-				//i1->fillUseVariables();
+				/*
+				// xor r1, r1, r1
+				dst_list = (*cit)->getDst();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getDst().front());
+				i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i1->fillDefVariables();
+				i1->fillUseVariables();
 
-				//// add r1, r1, r2
-				//src_list.clear();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getSrc().front());
-				//i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i2->fillDefVariables();
-				//i2->fillUseVariables();
+				// add r1, r1, r2
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().front());
+				i2 = new Instruction((*cit)->getPos(), InstructionType::I_ADD, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i2->fillDefVariables();
+				i2->fillUseVariables();
 
-				//// sub r1, r1, r3	
-				//src_list.clear();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getSrc().back());
-				//i3 = new Instruction((*cit)->getPos(), InstructionType::I_SUB, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i3->fillDefVariables();
-				//i3->fillUseVariables();
+				// sub r1, r1, r3	
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().back());
+				i3 = new Instruction((*cit)->getPos(), InstructionType::I_SUB, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i3->fillDefVariables();
+				i3->fillUseVariables();
 
-				//instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//deleted.push_back(*cit); // queue the replaced instruction for deletion
+				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				*/
 				break;
 			case I_XOR: // xor r1,r2,r3
-				/*
+				/**
 				*	xor r1,r1,r1
 				*	xor r1,r1,r2
 				*	xor r1,r1,r3
@@ -386,62 +392,66 @@ void ResourceAllocation::decomposeInstructions(Instructions & instr, Variable * 
 				* One solution for reducing would be to replace xor with xori in moveFromMemToImmediate function if possible
 				*/
 
-				//// xor r1,r1,r1
-				//dst_list = (*cit)->getDst();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getDst().front());
-				//i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i1->fillDefVariables();
-				//i1->fillUseVariables();
+				/*
+				// xor r1,r1,r1
+				dst_list = (*cit)->getDst();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getDst().front());
+				i1 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i1->fillDefVariables();
+				i1->fillUseVariables();
 
-				//// xor r1,r1,r2
-				//src_list.clear();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getSrc().front());
-				//i2 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i2->fillDefVariables();
-				//i2->fillUseVariables();
+				// xor r1,r1,r2
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().front());
+				i2 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i2->fillDefVariables();
+				i2->fillUseVariables();
 
-				//// xor r1,r1,r3
-				//src_list.clear();
-				//src_list.push_back((*cit)->getDst().front());
-				//src_list.push_back((*cit)->getSrc().back());
-				//i3 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
-				//i3->fillDefVariables();
-				//i3->fillUseVariables();
+				// xor r1,r1,r3
+				src_list.clear();
+				src_list.push_back((*cit)->getDst().front());
+				src_list.push_back((*cit)->getSrc().back());
+				i3 = new Instruction((*cit)->getPos(), InstructionType::I_XOR, dst_list, src_list, (*cit)->getParentLabel(), 0);
+				i3->fillDefVariables();
+				i3->fillUseVariables();
 
-				//instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
-				//deleted.push_back(*cit); // queue the replaced instruction for deletion
+				instr.insert(cit, i1); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i2); // inserts the new instruction before the chosen instruction pointed by the iterator
+				instr.insert(cit, i3); // inserts the new instruction before the chosen instruction pointed by the iterator
+				deleted.push_back(*cit); // queue the replaced instruction for deletion
+				*/
 				break;
 			default:
 				break;
 			}
 		}
-		//// this if is for addi instruction
-		//else if (unique_vars.size() == 2 && std::find(unique_vars.cbegin(), unique_vars.cend(), replaced_var) != unique_vars.cend())
-		//{
-		//	switch ((*cit)->getType())
-		//	{
-		//	case I_ADDI: // addi r1, r2, number
-		//			/*
-		//			*	xor r1, r1, r1
-		//			*	addi r1, r1, 5
-		//			*	add r1, r1, r2
-		//			* and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
-		//			*	addi r1, r1, (value at the mem location)
-		//			*
-		//			* This doesn't reduce number of live variables (see add,sub,xor descriptions)
-		//			*/
-		//		
-		//		break;
-		//	default:
-		//		break;
-		//	}
-		//}
+		/*
+		// this if is for addi instruction
+		else if (unique_vars.size() == 2 && std::find(unique_vars.cbegin(), unique_vars.cend(), replaced_var) != unique_vars.cend())
+		{
+			switch ((*cit)->getType())
+			{
+			case I_ADDI: // addi r1, r2, number
+					
+					//	xor r1, r1, r1
+					//	addi r1, r1, 5
+					//	add r1, r1, r2
+					// and the ADD instruction that was created can then be transformed to immediate operand according to the procedure described below
+					//	addi r1, r1, (value at the mem location)
+					//
+					// This doesn't reduce number of live variables (see add,sub,xor descriptions)
+					//
+				
+				break;
+			default:
+				break;
+			}
+		}
+		*/
 	}
-	/* 
+	/** 
 	* Remove all the instructions that were decomposed from the list of instruction pointers 
 	* and also delete the instruction to free dynamically allocated memory
 	*/
@@ -472,7 +482,7 @@ void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables 
 		}
 
 		if (i_var->getType() == InstructionType::I_SW) {
-			/*
+			/**
 			* if offset is used, this heuristic with replacing mem values with immedaite operands
 			* can potentialy not work so it is aborted.
 			* This is because it is hard to keep track what mem location is only being read from
@@ -481,7 +491,7 @@ void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables 
 			{
 				return;
 			}
-			/*
+			/**
 			* For this heuristic to keep track of memory locations that are used for reading only
 			* memory address has to be loaded into register, and that register cannot be changed
 			* before it is used in the sw instruction.
@@ -502,7 +512,7 @@ void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables 
 	// first we need to find mem vars that are read only and can fit into immediate operands (16 bits signed)
 	for each (Variable* m_var in m_vars)
 	{
-		/*
+		/**
 		* Check if the mem variable value is in range to be replaced by immediate operand
 		* range is -32,768 to +32,767 for signed immediate operand (16 bits)
 		*/
@@ -511,7 +521,7 @@ void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables 
 			continue; // if it is not in range then move to the next mem var
 		}
 
-		/*
+		/**
 		* Check if there are any instructions that write to the current memory variables
 		* First check what reg variable holds the address of the m_var, and then if that reg_var
 		* is not redefined and is in sw instruction as a second source parameter, and the nubmber 
@@ -548,13 +558,13 @@ void ResourceAllocation::moveFromMemToImmediate(Instructions & instr, Variables 
 		}
 	}
 
-	/*
+	/**
 	* la instructions that load the readonly mem loc address can't be deleted 
 	* because maybe they are used for some other purpose (rare but possible)
 	* example: system call that prints the address
 	*/
 
-	/*
+	/**
 	* At this point the mem variables that are read only are known
 	* and they can now possibly be replaced with imediate operands
 	*/
@@ -680,7 +690,7 @@ Variable * ResourceAllocation::createNewRegVariable(Variables& r_vars)
 
 std::map<Variable*, int> ResourceAllocation::makeVarInterferenceMap(InterferenceGraph & ig, Variables & r_vars)
 {
-	/*
+	/**
 	* First the rank is calculated for all the variables, and is stored in a map
 	*/
 	std::map <Variable*, int> varRang;
@@ -724,7 +734,7 @@ SimplificationStack & ResourceAllocation::performSimplification(InterferenceGrap
 {
 	// TODO: Change map key from variable pointer to string so the order is always the same for the same input code
 
-	/*
+	/**
 	* First the rank is calculated for all the variables, and is stored in a map
 	*/
 	std::map <Variable*, int> varRang = makeVarInterferenceMap(ig,vars);

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-/*
+/**
 * Adding new isntrucitons process:
 * Types.h				 = add the instruction type to TokenType and to the InstructionType
 * Types.cpp				 = add the instruction to to the functions that convert instructions to string
@@ -26,7 +26,7 @@ using namespace std;
 * IR.cpp				 = Add the case with the desired output for the MIPS instruction that will be written to file
 */
 
-/*
+/**
 * System call for printing int from memory 
 	li $v0, 1       # $system call code for print_int
 	la $t4,	m3
@@ -48,12 +48,26 @@ using namespace std;
 	syscall
 */
 
-/*
+/**
+* Notes when documenting for doxygen
+* 1. Comments must start with two start
+* 2. use word param
+* 3. use word returns
+* 4. use word throws or throw
+* 5. in param first type name of the parameter
+* 6. use three backslashes if you want what you write to appear next to class in docs
+*/
+
+
+/**
 * Program arguments ( '/' is used to symbolize choice between possible values):
 *	[inFilename.mavn] [outFilename]  for reading the program from the .mavn file and outputing MIPS code
 *	[inFilename.mavn] [outFilename] [hex/bin] same as above, but also creates temporary zerobytes program in temp directory
 *	[inFoldername] [outFilename] [hex/bin] [zerobytes] loads the MAVN program from the zerobytes hex/binary file names in the folder
 *		and creates the MIPS output file.
+* @param argc number of arguments
+* @param argv list of argument pointers
+* @returns 0 if succesfully finished
 */
 int main(int argc, char* argv[])
 {

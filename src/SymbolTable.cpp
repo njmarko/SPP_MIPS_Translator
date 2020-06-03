@@ -37,7 +37,7 @@ void SymbolTable::connectInstructions()
 {
 	// connectInstructions function can potentialy be moved to liveness analysis module
 
-	/*
+	/**
 	* If the main function declaration doesn't exist, throw an error
 	*/
 	if (!main_func_declared())
@@ -102,7 +102,7 @@ void SymbolTable::resetData()
 
 Instruction * SymbolTable::getInstrFromLabel(const std::string & label)
 {
-	/*
+	/**
 	* This may be an overcomplicated solution, because the gramar doesn't allow for some of the cases to happen
 	* but the idea is that it will continue to work if the gramar for the labels changes
 	* It also accounts for instructions being removed in some later steps
@@ -350,7 +350,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		break;
 	case I_BGEZ: // E → bgez rid, id
 	case I_BLTZ: // E → bltz rid, id
-		/*
+		/**
 		* Existance of the lable that is being jumped to will not be checked here
 		* because the target lable can be declared after this instruction.
 		* Existance of the lable will be checked in the later steps
@@ -367,7 +367,7 @@ void SymbolTable::makeInstruction(const std::list<std::string>& params, Instruct
 		ins->fillUseVariables();
 		break;
 	case I_B: // E → b id
-		/*
+		/**
 		* Existance of the lable that is being jumped to will not be checked here
 		* because the target lable can be declared after this instruction.
 		* Existance of the lable will be checked in the later steps 
@@ -393,7 +393,7 @@ void SymbolTable::addInstruction(Instruction * instr)
 {
 	instructions.push_back(instr);
 
-	/*
+	/**
 	* This part is for adding the position of the first instruction
 	* to the latest label. If there are no labels 
 	* or if the label already has instruction assigned
