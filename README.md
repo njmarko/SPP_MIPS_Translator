@@ -27,12 +27,12 @@ The program that translates MAVN(Higher level MIPS assembler) assembly language 
 
 
 <div align="center">
-<img alt="signal-visualization" align="center" width="100%" src="https://user-images.githubusercontent.com/34657562/173563145-8b3bd313-c5e1-4667-ad3f-0c95810b4282.png" />
+<img alt="compiler-phases" align="center" width="100%" src="https://user-images.githubusercontent.com/34657562/173563145-8b3bd313-c5e1-4667-ad3f-0c95810b4282.png" />
   <p align="center">Ilustration 1 - Phases of the compilation process.</p>
 </div>
 
 <div align="center">
-<img alt="signal-visualization" align="center" width="100%" src="https://user-images.githubusercontent.com/34657562/173564145-86db2c40-2150-4295-b6e5-9fd4364e12e9.png" />
+<img alt="graph-coloring-register-allocation" align="center" width="100%" src="https://user-images.githubusercontent.com/34657562/173564145-86db2c40-2150-4295-b6e5-9fd4364e12e9.png" />
   <p align="center">Ilustration 2 - Graph coloring register allocation.</p>
 </div>
 
